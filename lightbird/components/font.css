@@ -1,0 +1,23 @@
+/*
+  Lightbird - font.css
+  https://github.com/reizumii/lightbird
+*/
+
+:root {
+  font-size: var(--lb-font-size-md) !important;
+}
+
+@media (-moz-platform: windows) {
+  :root,
+  .cui-widget-panel,
+  #widget-overflow {
+    font-family: "Segoe UI Variable", "Segoe UI", sans-serif !important;
+  }
+}
+
+/* tagline font */
+@font-face {
+  font-family: "Junicode";
+  src: url("../assets/fonts/JunicodeVF-Roman.woff2") format("woff2");
+  font-display: swap;
+}

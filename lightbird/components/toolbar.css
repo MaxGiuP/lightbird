@@ -1,0 +1,139 @@
+/*
+  Lightbird - toolbar.css
+  https://github.com/reizumii/lightbird
+*/
+
+/* search bar */
+global-search-bar > .kbd-container {
+  display: none;
+}
+form {
+  font-size: var(--lb-font-size-md) !important;
+  min-height: 32px !important;
+}
+input[type="search"] {
+  border-bottom-color: var(--lb-border-color-3) !important;
+  --search-bar-background: var(--lb-input-bgcolor);
+  --search-bar-border-color: var(--lb-border-color-2);
+  --search-padding: 12px !important;
+}
+form > input[type="search"] + div {
+  inset-inline-start: 11px !important;
+}
+form > #search-button {
+  fill: var(--lb-text-ghost-color) !important;
+  padding-inline: 12px !important;
+  height: 100% !important;
+
+  &:hover {
+    background-color: transparent !important;
+  }
+}
+.unified-toolbar {
+  & .search-button-icon {
+    --icon-search: var(--lb-icon-search-12);
+  }
+}
+
+#titlebar {
+  margin-inline-start: 0 !important;
+}
+#unifiedToolbarContainer {
+  min-height: var(--lb-toolbar-height);
+  --spaces-total-width: 0;
+}
+#unifiedToolbar {
+  --logo-margin: 18px;
+
+  @media not -moz-pref("lightbird.logo.hide") {
+    &::before {
+      content: "";
+      width: 93px;
+      height: 12px;
+      margin-left: var(--logo-margin);
+      background: no-repeat center/100% var(--lb-icon-wordmark);
+      fill: var(--selected-item-color);
+      -moz-context-properties: fill;
+    }
+  }
+  :root:not([spacestoolbar]) & {
+    --logo-margin: 8px;
+  }
+}
+unified-toolbar {
+  border-bottom: 0 !important;
+}
+.unified-toolbar-button[extension] {
+  & .button-label {
+    display: none;
+  }
+  &[popup] {
+    background-image: none !important;
+    padding-inline-end: var(--button-padding) !important;
+  }
+}
+
+/* spaces button */
+#spacesPinnedButton {
+  order: -1;
+}
+
+/* tabs */
+#tabs-toolbar {
+  margin-left: var(--spaces-total-width);
+  background-image: none !important;
+  --tabs-toolbar-box-shadow: none;
+
+  :root:not([spacestoolbar]) & {
+    --spaces-total-width: 2px;
+  }
+}
+#tabmail-arrowscrollbox {
+  margin-bottom: 4px;
+  --tab-min-height: 32px;
+}
+.tabmail-tab {
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  position: relative;
+  overflow: visible !important;
+
+  &:not(:hover)::before {
+    content: "";
+    width: 1px;
+    height: 16px;
+    margin-block: 8px;
+    position: absolute;
+    left: -1px;
+    background-color: var(--lb-border-color-2);
+  }
+  &:is([selected="true"], :hover) + .tabmail-tab::before {
+    content: none;
+  }
+  &[selected="true"] {
+    .tab-label {
+      font-weight: 600;
+    }
+    &::before {
+      content: none;
+    }
+  }
+}
+.tabmail-tab:hover .tab-background:not([selected="true"]) {
+  background-color: var(--lb-button-hover-bgcolor) !important;
+}
+.tab-background {
+  border-radius: 8px;
+  border: 1px solid transparent !important;
+
+  &[selected="true"] {
+    border-color: var(--lb-border-color-1) !important;
+    --toolbar-bgcolor: var(--lb-panel-bgcolor);
+  }
+}
+.tab-line {
+  display: none;
+}
+.tab-label {
+  font-size: var(--lb-font-size-xs);
+}

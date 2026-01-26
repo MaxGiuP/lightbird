@@ -1,0 +1,15 @@
+/*
+  Lightbird - about.css
+  https://github.com/reizumii/lightbird
+*/
+
+/* settings */
+:root {
+  --in-content-categories-background: transparent !important;
+}
+#pref-category-box {
+  background-color: transparent !important;
+}
+#categories > .category {
+  max-height: 36px !important;
+}

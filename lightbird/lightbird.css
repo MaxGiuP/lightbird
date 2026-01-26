@@ -1,0 +1,17 @@
+/*
+  Lightbird
+  https://github.com/reizumii/lightbird
+*/
+
+/* components */
+@import "components/variables.css";
+@import "components/font.css";
+@import "components/toolbar.css";
+@import "components/main.css";
+@import "components/spaces.css";
+@import "components/popups.css";
+@import "components/icons.css";
+@import "components/widgets.css";
+
+/* pages */
+@import "components/about.css";

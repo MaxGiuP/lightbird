@@ -1,0 +1,93 @@
+/*
+  Lightbird - variables.css
+  https://github.com/reizumii/lightbird
+*/
+
+:root {
+  --selected-item-color: AccentColor !important;
+
+  --lb-panel-bgcolor: rgba(255, 255, 255, 0.5);
+  --lb-text-color: rgba(0, 0, 0, 0.9);
+  --lb-text-ghost-color: rgba(0, 0, 0, 0.5);
+  --lb-text-primary-color: rgba(255, 255, 255, 1);
+  --lb-space-icon-color: rgba(0, 0, 0, 0.5);
+  --lb-button-hover-bgcolor: rgba(0, 0, 0, 0.04);
+  --lb-button-active-bgcolor: rgba(0, 0, 0, 0.06);
+  --lb-button-selected-bgcolor: rgba(0, 0, 0, 0.04);
+  --lb-button-toggle-enabled-bgcolor: rgba(255, 255, 255, 0.7);
+  --lb-button-primary-border-top:  rgba(255, 255, 255, 0.2);
+  --lb-button-primary-border-bottom:  rgba(0, 0, 0, 0.2);
+  --lb-input-bgcolor: rgba(255, 255, 255, 0.7);
+  --lb-button-group-bgcolor: rgba(0, 0, 0, 0.02);
+  --lb-infobar-warning-bgcolor: #fff4ce;
+  --lb-border-color-1: rgba(0, 0, 0, 0.06);
+  --lb-border-color-2: rgba(0, 0, 0, 0.08);
+  --lb-border-color-3: rgba(0, 0, 0, 0.25);
+
+  --lb-toolbar-height: 48px;
+  --lb-header-height: 48px;
+  --lb-button-height: 32px;
+  --lb-button-icon-height: 36px;
+  --lb-list-item-height: 36px;
+  --lb-mail-card-height: 58px;
+  --lb-button-gap: 4px;
+  --lb-list-item-gap: 12px;
+
+  --lb-icon-size-xs: 12px;
+  --lb-icon-size-sm: 16px;
+  --lb-icon-size-md: 20px;
+  --lb-icon-size-lg: 24px;
+
+  --lb-icon-line-md: 16px;
+  --lb-icon-line-lg: 24px;
+  --lb-icon-line-xl: 32px;
+
+  --lb-font-size-xxs: 10px;
+  --lb-font-size-xs: 12px;
+  --lb-font-size-sm: 13px;
+  --lb-font-size-md: 14px;
+  --lb-font-size-lg: 16px;
+  --lb-font-size-xl: 18px;
+
+  --spaces-total-width: 56px !important;
+  --list-item-min-height: var(--lb-list-item-height) !important;
+  --folder-pane-icon-size: var(--lb-icon-size-md) !important;
+  --table-header-cell-icon-width: calc(var(--lb-icon-size-sm) * 2) !important;
+  --table-header-cell-icon-min-width: calc(var(--lb-icon-size-sm) * 2) !important;
+  --tree-header-table-height: calc(var(--lb-icon-size-sm) * 2) !important;
+
+  --button-border-radius: 4px !important;
+  --selected-item-text-color: var(--lb-text-primary-color) !important;
+
+  --layout-border-0: var(--lb-border-color-1) !important;
+  --sidebar-border-color: var(--lb-border-color-1) !important;
+  --splitter-color: var(--lb-border-color-1) !important;
+  --panel-separator-color: var(--lb-border-color-1) !important;
+
+  --tree-view-bg: var(--lb-panel-bgcolor) !important;
+
+  --list-container-background-hover: var(--lb-button-hover-bgcolor) !important;
+  --list-container-background-selected: var(--lb-button-selected-bgcolor) !important;
+  --list-container-background-selected-current: var(--lb-button-selected-bgcolor) !important;
+  --list-container-background-selected-current-focused: var(--lb-button-active-bgcolor) !important;
+
+  --toolbarbutton-hover-background: var(--lb-button-hover-bgcolor) !important;
+  --toolbarbutton-active-background: var(--lb-button-active-bgcolor) !important;
+  --toolbarbutton-hover-bordercolor: transparent !important;
+  --toolbarbutton-active-bordercolor: transparent !important;
+
+  --toolbar-button-hover-background-color: var(--lb-button-hover-bgcolor) !important;
+  --toolbar-button-active-background-color: var(--lb-button-active-bgcolor) !important;
+  --toolbar-button-hover-border-color: transparent !important;
+  --toolbar-button-active-border-color: transparent !important;
+  --toolbar-button-hover-checked-color: var(--lb-button-hover-bgcolor) !important;
+  --toolbar-button-active-checked-color: var(--lb-button-active-bgcolor) !important;
+
+  --button-hover-background-color: var(--lb-button-hover-bgcolor) !important;
+  --button-active-background-color: var(--lb-button-active-bgcolor) !important;
+
+  --button-background-color-ghost-hover: var(--lb-button-hover-bgcolor) !important;
+  --button-background-color-ghost-active: var(--lb-button-active-bgcolor) !important;
+  --button-border-color-ghost-hover: transparent !important;
+  --button-border-color-ghost-active: transparent !important;
+}

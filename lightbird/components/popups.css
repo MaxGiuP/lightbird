@@ -1,0 +1,50 @@
+/*
+  Lightbird - popups.css
+  https://github.com/reizumii/lightbird
+*/
+
+:root {
+  --arrowpanel-dimmed: var(--lb-button-hover-bgcolor) !important;
+  --arrowpanel-dimmed-further: var(--lb-button-active-bgcolor) !important;
+}
+
+.panel-subview-body {
+  --arrowpanel-padding: 4px 0;
+}
+
+.subview-subheader,
+panelview .toolbarbutton-1,
+.subviewbutton,
+menu.subviewbutton,
+.widget-overflow-list .toolbarbutton-1 {
+  --appmenu-button-margin: 2px 6px;
+  --appmenu-button-padding: 4px;
+}
+
+#widget-overflow-mainView > .panel-subview-body > toolbarseparator,
+.PanelUI-subView menuseparator,
+.PanelUI-subView toolbarseparator,
+.cui-widget-panelview menuseparator,
+.cui-widget-panel toolbarseparator {
+  --panel-separator-margin: 4px;
+}
+
+.subviewbutton {
+  &[shortcut]::after {
+    font-size: var(--lb-font-size-xs);
+    color: var(--lb-text-ghost-color);
+  }
+}
+
+.panel-header {
+  & > .subviewbutton-back {
+    -moz-context-properties: stroke;
+    padding: 6px !important;
+    transform: none !important;
+
+    & > .toolbarbutton-icon {
+      width: var(--lb-icon-size-sm) !important;
+      height: var(--lb-icon-size-sm) !important;
+    }
+  }
+}

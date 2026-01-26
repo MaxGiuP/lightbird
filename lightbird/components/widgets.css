@@ -1,0 +1,155 @@
+/*
+  Lightbird - widgets.css
+  https://github.com/reizumii/lightbird
+*/
+
+/* buttons */
+button[part="dialog-button"] {
+  height: var(--lb-button-height) !important;
+}
+.button {
+  fill: var(--lb-text-color) !important;
+  --icon-size: var(--lb-icon-size-md) !important;
+  --button-background-color: transparent;
+  --button-border-color: transparent;
+  --button-margin: 0;
+
+  &:not(.icon-only) {
+    height: var(--lb-button-height) !important;
+  }
+  &.button-primary {
+    fill: var(--button-primary-text-color) !important;
+    border-top-color: var(--lb-button-primary-border-top) !important;
+    border-bottom-color: var(--lb-button-primary-border-bottom) !important;
+    --button-primary-border-color: transparent;
+  }
+  &.button-flat {
+    fill: var(--lb-text-color) !important;
+
+    &:hover {
+      background-color: var(--lb-button-hover-bgcolor) !important;
+    }
+  }
+  &.icon-only:not(.tree-button-more) {
+    height: var(--lb-button-icon-height) !important;
+  }
+  &.check-button {
+    &.icon-button {
+      width: var(--lb-button-icon-height) !important;
+      height: var(--lb-button-icon-height) !important;
+      padding-inline: 0 !important;
+      background-position: center !important;
+    }
+    & span,
+    &::before {
+      display: none;
+    }
+  }
+  &.unified-toolbar-button[aria-pressed="true"] {
+    &:enabled {
+      border-bottom-color: var(--lb-border-color-3) !important;
+      --toolbar-button-hover-background-color: var(--lb-button-toggle-enabled-bgcolor);
+      --toolbar-button-hover-border-color: var(--lb-border-color-2);
+
+      &::before {
+        display: unset !important;
+        content: "";
+        width: var(--lb-icon-line-md) !important;
+        height: 3px !important;
+        border: 0 !important;
+        inset-block: unset !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        margin: 0 !important;
+      }
+    }
+  }
+}
+.button-group {
+  --button-border-size: 0;
+}
+button.email-action-flagged {
+  fill: var(--lb-text-color) !important;
+}
+.toolbarbutton-1 {
+  fill: var(--lb-text-color) !important;
+}
+.message-header-view-button {
+  fill: var(--lb-text-color) !important;
+  min-width: var(--lb-button-height) !important;
+  min-height: var(--lb-button-height) !important;
+}
+.button-background {
+  &[type~="icon"] {
+    fill: var(--lb-text-color) !important;
+  }
+}
+.subviewbutton-iconic > .toolbarbutton-icon {
+  --appmenu-icons-fill: var(--lb-text-color);
+  --appmenu-icons-stroke: transparent;
+}
+
+/* info bar */
+.infobar[type="warning"] {
+  min-height: 48px;
+  border: 1px solid var(--lb-border-color-1) !important;
+  --message-bar-background-color: var(--lb-infobar-warning-bgcolor) !important;
+  --message-bar-icon-url: var(--lb-icon-warning-circle-fill) !important;
+}
+div.container {
+  align-items: center !important;
+  box-shadow: none !important;
+  --message-bar-container-min-height: 48px;
+}
+img.icon {
+  fill: var(--message-bar-icon-color) !important;
+}
+.close[data-l10n-id="moz-message-bar-close-button"] {
+  --close-icon-size: 36px;
+  --button-border-color-ghost: transparent !important;
+  --icon-close: var(--lb-icon-close);
+}
+
+/* hide keyboard shortcuts */
+search-bar,
+global-search-bar {
+  position: relative;
+
+  & > span {
+    opacity: 0 !important;
+  }
+  &:not(:focus-within)::before {
+    content: attr(label);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 11px;
+    color: var(--lb-text-ghost-color);
+    z-index: 1;
+  }
+}
+input {
+  &:focus-visible {
+    outline: none !important;
+    border-bottom: 2px solid var(--selected-item-color) !important;
+  }
+}
+
+/* input */
+input:is([type="text"], [type="url"]) {
+  min-height: 32px !important;
+  background-color: var(--field-background-color) !important;
+  border: 1px solid var(--lb-border-color-2) !important;
+  border-bottom-color: var(--lb-border-color-3) !important;
+  border-radius: var(--button-border-radius) !important;
+  box-sizing: border-box;
+  --field-background-color: var(--lb-input-bgcolor);
+  --field-border-color: var(--lb-border-color-2);
+  --field-border-hover-color: var(--lb-border-color-2);
+
+  &:focus {
+    border-color: var(--lb-border-color-2) !important;
+    border-bottom: 2px solid var(--selected-item-color) !important;
+  }
+}
