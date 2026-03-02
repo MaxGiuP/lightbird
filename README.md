@@ -4,10 +4,7 @@
 
 <p align="center"><img src="images/lightbird.webp" alt="Mockup of Lightbird"></p>
 
-> [!WARNING]
-> **This theme is currently an early work-in-progress and only light mode is supported!!** Only the Mail feature is almost finished as of now. Other parts of Thunderbird may appear broken for some time. Use at your own risk!
->
-> The only functional use case for now is just reading emails and viewing calendar events.
+
 
 ## Version support
 
