@@ -1,6 +1,52 @@
-/*
-  Lightbird
-  https://github.com/reizumii/lightbird
-*/
 
-@import "lightbird/pages.css";
+/* ── gconversation extension ───────────────────────────────────────────────
+   URL: chrome://conversations/content/stub.html
+   Dark mode vars use zinc grays (rgb(56,56,61), #3f3f46) — override to
+   neutral black to match the rest of the theme.  */
+@-moz-document url-prefix("chrome://conversations/content/stub.html") {
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --application-background-color: rgb(18, 18, 18) !important;
+      --application-foreground-color: rgb(249, 249, 250) !important;
+      --border-color: #3a3a3a !important;
+      --dull-foreground-color: #999 !important;
+    }
+    body {
+      background-color: rgb(18, 18, 18) !important;
+    }
+    .message {
+      background-color: rgb(24, 24, 24) !important;
+    }
+    .conversationHeader {
+      background-color: rgb(28, 28, 28) !important;
+    }
+    .replyBox {
+      background-color: rgb(28, 28, 28) !important;
+      color: rgb(180, 180, 180) !important;
+    }
+  }
+}
+
+/* ── Account Central page ─────────────────────────────────────────────────
+   URL: chrome://messenger/content/msgAccountCentral.xhtml?folderURI=...
+   The page sets --bg-color: #2f2f33 in dark mode; override to near-black.  */
+@-moz-document url-prefix("chrome://messenger/content/msgAccountCentral.xhtml") {
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-color: rgb(18, 18, 18) !important;
+      --body-background-color: rgb(18, 18, 18) !important;
+      --header-bg-color: rgba(255, 255, 255, 0.06) !important;
+      --accounts-bg-color: rgba(255, 255, 255, 0.04) !important;
+      --btn-bg: rgb(32, 32, 32) !important;
+      --text-color: #e8e8e8 !important;
+      --title-color: #f0f0f0 !important;
+    }
+    body {
+      background-color: rgb(18, 18, 18) !important;
+    }
+    #accountCentral {
+      background-color: rgb(18, 18, 18) !important;
+      background-image: none !important;
+    }
+  }
+}

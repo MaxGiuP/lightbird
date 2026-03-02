@@ -11,6 +11,7 @@
   border-bottom: 0;
   border-right: 0;
   overflow: clip;
+  backdrop-filter: blur(14px) saturate(115%) !important;
 }
 
 /* TODO: change this */
@@ -18,7 +19,7 @@
   background-color: transparent !important;
 }
 #folderPane {
-  --sidebar-background: transprent;
+  --sidebar-background: transparent;
 }
 :root:not(#messengerWindow) {
   background: transparent !important;
@@ -238,7 +239,7 @@
   &:not(:focus, :focus-within) .card-layout,
   &:not(:focus, :focus-within) .card-layout[data-properties~="junk"] {
     &.selected.current > td > .card-container {
-      --tree-card-background: var(--lb-button-active-bgcolor);
+      --tree-card-background: color-mix(in srgb, AccentColor 26%, transparent);
     }
   }
   & .card-layout {
@@ -438,10 +439,10 @@
   padding-bottom: 0 !important;
 }
 #calendarContent {
-  --layout-background-0: transprent;
+  --layout-background-0: transparent;
 }
 #calSidebar {
-  --layout-background-2: transprent;
+  --layout-background-2: transparent;
 }
 #primaryButtonSidePanel {
   justify-content: start !important;
@@ -707,4 +708,31 @@ calendar-multiweek-view {
   font-size: var(--lb-font-size-xs) !important;
   font-weight: 600 !important;
   color: var(--lb-text-ghost-color) !important;
+}
+
+/* Current message row highlight (mail list) */
+#threadTree[rows="thread-card"] .card-layout.selected.current > td > .card-container {
+  --tree-card-background: color-mix(in srgb, AccentColor 26%, transparent) !important;
+}
+#threadTree[rows="thread-card"]:focus .card-layout.selected.current > td > .card-container {
+  --tree-card-background: color-mix(in srgb, AccentColor 34%, transparent) !important;
+}
+#threadTree treechildren::-moz-tree-row(selected, current),
+#threadTree treechildren::-moz-tree-row(selected, focus),
+#threadTree treechildren::-moz-tree-row(current) {
+  background-color: color-mix(in srgb, AccentColor 30%, transparent) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  #threadTree[rows="thread-card"] .card-layout.selected.current > td > .card-container {
+    --tree-card-background: color-mix(in srgb, AccentColor 26%, transparent) !important;
+  }
+  #threadTree[rows="thread-card"]:focus .card-layout.selected.current > td > .card-container {
+    --tree-card-background: color-mix(in srgb, AccentColor 34%, transparent) !important;
+  }
+  #threadTree treechildren::-moz-tree-row(selected, current),
+  #threadTree treechildren::-moz-tree-row(selected, focus),
+  #threadTree treechildren::-moz-tree-row(current) {
+    background-color: color-mix(in srgb, AccentColor 30%, transparent) !important;
+  }
 }

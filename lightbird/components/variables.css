@@ -4,6 +4,7 @@
 */
 
 :root {
+  color-scheme: light dark;
   --selected-item-color: AccentColor !important;
 
   --lb-panel-bgcolor: rgba(255, 255, 255, 0.5);
@@ -68,8 +69,8 @@
 
   --list-container-background-hover: var(--lb-button-hover-bgcolor) !important;
   --list-container-background-selected: var(--lb-button-selected-bgcolor) !important;
-  --list-container-background-selected-current: var(--lb-button-selected-bgcolor) !important;
-  --list-container-background-selected-current-focused: var(--lb-button-active-bgcolor) !important;
+  --list-container-background-selected-current: color-mix(in srgb, AccentColor 20%, transparent) !important;
+  --list-container-background-selected-current-focused: color-mix(in srgb, AccentColor 30%, transparent) !important;
 
   --toolbarbutton-hover-background: var(--lb-button-hover-bgcolor) !important;
   --toolbarbutton-active-background: var(--lb-button-active-bgcolor) !important;
@@ -90,4 +91,26 @@
   --button-background-color-ghost-active: var(--lb-button-active-bgcolor) !important;
   --button-border-color-ghost-hover: transparent !important;
   --button-border-color-ghost-active: transparent !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --lb-panel-bgcolor: rgba(20, 20, 20, 0.52);
+    --lb-text-color: rgba(255, 255, 255, 0.92);
+    --lb-text-ghost-color: rgba(255, 255, 255, 0.58);
+    --lb-text-primary-color: rgba(255, 255, 255, 1);
+    --lb-space-icon-color: rgba(255, 255, 255, 0.8);
+    --lb-button-hover-bgcolor: rgba(255, 255, 255, 0.06);
+    --lb-button-active-bgcolor: rgba(255, 255, 255, 0.10);
+    --lb-button-selected-bgcolor: rgba(255, 255, 255, 0.08);
+    --lb-button-toggle-enabled-bgcolor: rgba(255, 255, 255, 0.12);
+    --lb-button-primary-border-top: rgba(255, 255, 255, 0.12);
+    --lb-button-primary-border-bottom: rgba(0, 0, 0, 0.45);
+    --lb-input-bgcolor: rgba(255, 255, 255, 0.10);
+    --lb-button-group-bgcolor: rgba(255, 255, 255, 0.03);
+    --lb-infobar-warning-bgcolor: #3d2e00;
+    --lb-border-color-1: rgba(255, 255, 255, 0.08);
+    --lb-border-color-2: rgba(255, 255, 255, 0.12);
+    --lb-border-color-3: rgba(255, 255, 255, 0.26);
+  }
 }

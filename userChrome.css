@@ -4,3 +4,536 @@
 */
 
 @import "lightbird/lightbird.css";
+
+/* ── Hide top header / extension toolbar completely ────────────────────── */
+#navigation-toolbox,
+#unifiedToolbar,
+#unifiedToolbarContainer,
+.unified-toolbar {
+  display: none !important;
+  min-height: 0 !important;
+}
+
+/* ── Remove the margin Lightbird reserves for the hidden toolbar ─────────
+   spaces.css sets margin-top: var(--lb-toolbar-height) on .spaces-toolbar
+   so that icons don't sit under the unified toolbar. Now it's gone.       */
+.spaces-toolbar:not([hidden]) {
+  margin-top: 0 !important;
+}
+
+/* ── Remove tabmail border + radius that causes the 1-2px pane gap ───────
+   main.css gives #tabmail border: 1px + border-top-left-radius: 8px      */
+#tabmail {
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+/* ── Whole-window transparency — OS desktop faintly visible behind app ─── */
+/* The background-image here is the solid fallback — it is always visible
+   and opaque. The ::before layer uses backdrop-filter to blur the image
+   that sits behind it. If ::before fails to render the image still shows. */
+#messengerWindow {
+  opacity: 0.95 !important;
+  background-image: url("images/winmail.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  position: relative !important;
+}
+
+/* ::before renders the blurred copy of the wallpaper on top of the fallback.
+   inset: -40px extends it beyond the viewport edges to prevent blurry-edge
+   fringing. If ::before fails in XUL the unblurred fallback above shows.   */
+#messengerWindow::before {
+  content: "" !important;
+  position: fixed !important;
+  inset: -40px !important;
+  background-image: url("images/winmail.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  filter: blur(20px) !important;
+  pointer-events: none !important;
+}
+
+/* ── CSS variable overrides — everything starts transparent ──────────────
+   Dark mode uses pure neutral black — no blue bias                        */
+:root {
+  --layout-background-0: transparent !important;
+  --layout-background-1: transparent !important;
+  --layout-background-2: transparent !important;
+  --layout-background-3: transparent !important;
+  --tree-view-bg: transparent !important;
+  --thread-pane-background: transparent !important;
+  --foldertree-background: transparent !important;
+  --sidebar-background: transparent !important;
+  --viewBackground: transparent !important;
+  --lb-panel-bgcolor: rgba(255, 255, 255, 0.22) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tb-dark-surface: rgb(18, 18, 18) !important;
+    --tb-msg-surface: rgb(18, 18, 18) !important;
+    --lb-panel-bgcolor: rgba(0, 0, 0, 0.40) !important;
+    /* Override any blue-biased Lightbird/theme canvas variables */
+    --color-canvas: rgb(0, 0, 0) !important;
+    --background-color-canvas: rgb(0, 0, 0) !important;
+    --background-color-box: rgba(10, 10, 10, 0.92) !important;
+    --background-color-deemphasized: rgba(6, 6, 6, 0.86) !important;
+  }
+}
+
+/* ── Top-level panes — frosted glass over the wallpaper ─────────────────── */
+#tabmail,
+#tabpanelcontainer,
+#mail3PaneTabBrowser,
+#mail3PaneTabBrowser browser,
+#calendar-panel,
+#calendarContent,
+#view-box,
+#calSidebar,
+#threadPane,
+#threadPaneWrapper,
+#messagepanebox,
+#messageBrowser {
+  background-color: color-mix(in srgb, var(--lb-panel-bgcolor) 90%, transparent) !important;
+  background-image: none !important;
+  backdrop-filter: blur(14px) saturate(115%) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  #tabmail,
+  #tabpanelcontainer,
+  #mail3PaneTabBrowser,
+  #mail3PaneTabBrowser browser,
+  #calendar-panel,
+  #calendarContent,
+  #view-box,
+  #calSidebar,
+  #threadPane,
+  #threadPaneWrapper {
+    background-color: var(--tb-dark-surface) !important;
+    backdrop-filter: none !important;
+  }
+  /* Message reading pane — solid surface (content fills the frame, no blur needed).
+     #messagepanebox / #messageBrowser kept for standalone window fallback.    */
+  #messagePane,
+  #messagepanebox,
+  #messageBrowser {
+    background-color: var(--tb-msg-surface) !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* ── Events / Today Pane panels — 0.95 opacity across all tabs ──────────────
+   Covers: Today Pane in mail view, calendar sidebar, tasks sidebar,
+   agenda panel, mini-day view, and any sidebar-panel children.             */
+#calSidebar,
+today-pane,
+#today-pane-panel,
+.today-pane,
+#agenda-panel,
+#miniday-pane,
+#sidebarSplitter + *,
+.sidebar-panel {
+  --layout-background-2: rgb(218, 218, 224) !important;
+  background-color: rgb(218, 218, 224) !important;
+  backdrop-filter: none !important;
+}
+#calSidebar > *,
+today-pane > *,
+#today-pane-panel > *,
+#agenda-panel > *,
+#miniday-pane > *,
+.sidebar-panel > * {
+  background-color: rgb(218, 218, 224) !important;
+  backdrop-filter: none !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  #calSidebar,
+  today-pane,
+  #today-pane-panel,
+  .today-pane,
+  #agenda-panel,
+  #miniday-pane,
+  #sidebarSplitter + *,
+  .sidebar-panel {
+    --layout-background-2: rgba(0, 0, 0, 0.82) !important;
+    background-color: rgba(0, 0, 0, 0.82) !important;
+    backdrop-filter: blur(24px) brightness(0.45) !important;
+  }
+  #calSidebar > *,
+  today-pane > *,
+  #today-pane-panel > *,
+  #agenda-panel > *,
+  #miniday-pane > *,
+  .sidebar-panel > * {
+    background-color: transparent !important;
+  }
+}
+
+/* ── Icon sidebar (spaces toolbar) + status bar ──────────────────────────
+   Light: white tint   Dark: pure neutral dark tint                        */
+#spacesToolbar,
+#spacesToolbarContainer,
+#status-bar,
+.statusbar {
+  background-color: rgba(240, 240, 240, 0.50) !important;
+  background-image: none !important;
+  backdrop-filter: blur(28px) saturate(130%) brightness(1.08) !important;
+  color: #1a1a1a !important;
+  /* Darker icons in light mode */
+  --lb-space-icon-color: rgba(0, 0, 0, 0.78) !important;
+  --spaces-button-color: rgba(0, 0, 0, 0.78) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  #spacesToolbar,
+  #spacesToolbarContainer,
+  #status-bar,
+  .statusbar {
+    background-color: rgba(0, 0, 0, 0.88) !important;
+    backdrop-filter: blur(28px) saturate(120%) brightness(0.88) !important;
+    color: #e8e8e8 !important;
+    /* White icons in dark mode */
+    --lb-space-icon-color: rgba(255, 255, 255, 0.85) !important;
+    --spaces-button-color: rgba(255, 255, 255, 0.85) !important;
+  }
+}
+
+/* ── Folder pane sidebar (account + folder tree) ─────────────────────────
+   Light: white tint   Dark: neutral dark tint                             */
+#folderPaneBox,
+#folderPane,
+#folderPaneHeaderBar,
+#folderTree,
+#folderTree ul {
+  background-color: rgba(240, 240, 245, 0.55) !important;
+  background-image: none !important;
+  backdrop-filter: blur(28px) saturate(130%) brightness(1.05) !important;
+  color: #1a1a1a !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  #folderPaneBox,
+  #folderPane,
+  #folderPaneHeaderBar,
+  #folderTree,
+  #folderTree ul {
+    background-color: rgb(18, 18, 18) !important;
+    backdrop-filter: none !important;
+    color: #e8e8e8 !important;
+  }
+}
+
+/* ── Inner panes — slightly more opaque frosted glass ───────────────────── */
+#threadPaneHeaderBar,
+#threadCols,
+#threadTree,
+[is="tree-view-table"],
+[is="tree-view-table-body"],
+[is="tree-view-table-body"] > .table-layout,
+[is="tree-view-table-body"] > .card-layout > td > .card-container,
+#calendarDisplayDeck,
+#calendarViewHeader,
+#calendar-list-pane,
+#calendar-list,
+#calendar-list > li,
+calendar-month-view,
+calendar-multiweek-view,
+.monthtable,
+.monthtable td > *,
+.calendar-month-day-box-current-month,
+.calendar-month-day-box-other-month,
+.calendar-month-day-box-day-off,
+#quick-filter-bar,
+.list-header-bar {
+  background-color: color-mix(in srgb, var(--lb-panel-bgcolor) 72%, transparent) !important;
+  background-image: none !important;
+  backdrop-filter: blur(18px) saturate(120%) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  #threadPaneHeaderBar,
+  #threadCols,
+  #threadTree,
+  [is="tree-view-table"],
+  [is="tree-view-table-body"],
+  [is="tree-view-table-body"] > .table-layout,
+  [is="tree-view-table-body"] > .card-layout > td > .card-container,
+  #calendarDisplayDeck,
+  #calendarViewHeader,
+  #calendar-list-pane,
+  #calendar-list,
+  #calendar-list > li,
+  calendar-month-view,
+  calendar-multiweek-view,
+  .monthtable,
+  .monthtable td > *,
+  .calendar-month-day-box-current-month,
+  .calendar-month-day-box-other-month,
+  .calendar-month-day-box-day-off,
+  #quick-filter-bar,
+  .list-header-bar {
+    background-color: var(--tb-dark-surface) !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* ── Thread/folder row backgrounds — transparent so blur shows through ───── */
+#threadTree treechildren::-moz-tree-row,
+#threadTree treechildren::-moz-tree-row(odd),
+#threadTree treechildren::-moz-tree-row(even),
+#threadTree treechildren::-moz-tree-row(hover),
+#folderTree li > .container,
+[is="tree-view-table-body"] tr,
+[is="tree-view-table-body"] td,
+[is="tree-view-table-body"] > .table-layout > tr,
+[is="tree-view-table-body"] > .table-layout > tr > td,
+[is="tree-view-table-body"] > .card-layout > tr,
+[is="tree-view-table-body"] > .card-layout > tr > td,
+.card-container,
+.card-row,
+.card-header-line,
+.card-secondary-line,
+.subject-line,
+.table-layout,
+.table-layout > tr,
+.table-layout > tr > td {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* ── Unread emails — maximum visual intensity ────────────────────────────── */
+[is="tree-view-table-body"] tr.unread .subject-line,
+[is="tree-view-table-body"] tr.unread .card-header-line,
+[is="tree-view-table-body"] tr.unread .card-secondary-line,
+[is="tree-view-table-body"] tr.unread td,
+[is="tree-view-table-body"] tr[data-properties~="unread"] .subject-line,
+[is="tree-view-table-body"] tr[data-properties~="unread"] .card-header-line,
+[is="tree-view-table-body"] tr[data-properties~="unread"] .card-secondary-line,
+[is="tree-view-table-body"] tr[data-properties~="unread"] td {
+  font-weight: 800 !important;
+  -webkit-text-stroke: 0.4px currentColor !important;
+  text-shadow: 0 0 0.6px currentColor !important;
+}
+/* Unread dot indicator before time in card view */
+#threadTree[rows="thread-card"] .card-layout[data-properties~="unread"] .date::before {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  margin-right: 0.5em;
+  border-radius: 50%;
+  background-color: AccentColor;
+  box-shadow: 0 0 0 1px color-mix(in srgb, AccentColor 70%, black),
+              0 0 6px color-mix(in srgb, AccentColor 55%, transparent);
+  vertical-align: 0.02em;
+}
+
+/* ── Selected row — soft blue tint ──────────────────────────────────────── */
+#threadTree treechildren::-moz-tree-row(selected) {
+  background-color: rgba(30, 110, 230, 0.18) !important;
+}
+
+[is="tree-view-table-body"] tr.selected > td,
+[is="tree-view-table-body"] tr[aria-selected="true"] > td,
+[is="tree-view-table-body"] > .table-layout > tr.selected > td,
+[is="tree-view-table-body"] > .card-layout > tr.selected > td,
+[is="tree-view-table-body"] > .card-layout > tr[aria-selected="true"] > td {
+  background-color: rgba(30, 110, 230, 0.18) !important;
+  background-image: none !important;
+}
+
+/* Focused/active selected — slightly stronger */
+[is="tree-view-table-body"] tr.selected:focus-within > td,
+[is="tree-view-table-body"] tr[aria-selected="true"]:focus-within > td {
+  background-color: rgba(30, 110, 230, 0.28) !important;
+}
+
+/* ── Context / right-click menus — fully opaque, no transparency ─────────── */
+menupopup,
+panel[type="autocomplete"],
+panel[type="autocomplete-richlistbox"] {
+  --panel-background: rgb(242, 242, 242) !important;
+  --panel-border-color: rgb(200, 200, 200) !important;
+  --arrowpanel-background: rgb(242, 242, 242) !important;
+  background-color: rgb(242, 242, 242) !important;
+  backdrop-filter: none !important;
+  opacity: 1 !important;
+}
+menuitem,
+menu,
+menuseparator {
+  background-color: transparent !important;
+}
+menuitem:hover,
+menu:hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  menupopup,
+  panel[type="autocomplete"],
+  panel[type="autocomplete-richlistbox"] {
+    --panel-background: rgb(36, 36, 36) !important;
+    --panel-border-color: rgb(60, 60, 60) !important;
+    --arrowpanel-background: rgb(36, 36, 36) !important;
+    background-color: rgb(36, 36, 36) !important;
+  }
+  menuitem:hover,
+  menu:hover {
+    background-color: rgba(255, 255, 255, 0.10) !important;
+  }
+}
+
+/* ── App-switcher (spaces toolbar) active button — vivid system blue */
+@media (prefers-color-scheme: dark) {
+  .spaces-toolbar-button.current > img {
+    fill: AccentColor !important;
+  }
+  .spaces-toolbar-button.current::before {
+    background-color: AccentColor !important;
+  }
+}
+
+/* ── Standalone message window (double-click email → separate window) ────────
+   Root element is <html id="messengerWindow" windowtype="mail:messageWindow">
+   — it shares #messengerWindow with the main window, so it inherits the
+   wallpaper background-image. We must strip that and go solid in dark mode.  */
+#messengerWindow[windowtype="mail:messageWindow"] {
+  /* Remove wallpaper from standalone window in all modes */
+  background-image: none !important;
+  background-color: rgb(255, 255, 255) !important;
+  opacity: 1 !important;
+}
+@media (prefers-color-scheme: dark) {
+  #messengerWindow[windowtype="mail:messageWindow"] {
+    background-color: var(--tb-dark-surface) !important;
+    --color-canvas: color-mix(in srgb, var(--tb-dark-surface) 100%, black) !important;
+    --background-color-canvas: color-mix(in srgb, var(--tb-dark-surface) 100%, black) !important;
+    --viewBackground: color-mix(in srgb, var(--tb-dark-surface) 100%, black) !important;
+    --color-gray-90: color-mix(in srgb, var(--tb-dark-surface) 100%, black) !important;
+    --layout-background-0: color-mix(in srgb, var(--tb-dark-surface) 100%, black) !important;
+    --layout-background-1: color-mix(in srgb, var(--tb-dark-surface) 100%, black) !important;
+  }
+  #messengerWindow[windowtype="mail:messageWindow"] #messageBrowser,
+  #messengerWindow[windowtype="mail:messageWindow"] #messagepane,
+  #messengerWindow[windowtype="mail:messageWindow"] browser {
+    background-color: var(--tb-dark-surface) !important;
+    background-image: none !important;
+  }
+}
+
+/* ── Compose window ──────────────────────────────────────────────────────────
+   Root: <html id="msgcomposeWindow" windowtype="msgcompose">
+   Lightbird sets :root:not(#messengerWindow){background:transparent} which
+   hits this window. Override with id+attr selector (specificity 1,1,0).     */
+#msgcomposeWindow[windowtype="msgcompose"] {
+  background-color: rgb(246, 246, 246) !important;
+  background-image: none !important;
+}
+#msgcomposeWindow[windowtype="msgcompose"] #MsgHeadersToolbar {
+  background-color: rgb(236, 236, 236) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+}
+/* Compose writing pane (editor frame) */
+#msgcomposeWindow[windowtype="msgcompose"] #messageEditor,
+#msgcomposeWindow[windowtype="msgcompose"] #content-frame {
+  background-color: rgb(255, 255, 255) !important;
+  color: rgb(0, 0, 0) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  #msgcomposeWindow[windowtype="msgcompose"] {
+    background-color: rgb(22, 22, 22) !important;
+    background-image: none !important;
+    --color-canvas: rgb(22, 22, 22) !important;
+    --background-color-canvas: rgb(22, 22, 22) !important;
+    --viewBackground: rgb(22, 22, 22) !important;
+  }
+  #msgcomposeWindow[windowtype="msgcompose"] #MsgHeadersToolbar {
+    background-color: rgb(28, 28, 28) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+  }
+  #msgcomposeWindow[windowtype="msgcompose"] #messageEditor,
+  #msgcomposeWindow[windowtype="msgcompose"] #content-frame {
+    background-color: rgb(18, 18, 18) !important;
+    color: rgb(255, 255, 255) !important;
+  }
+}
+
+/* Account central page (browser element in about:3pane) */
+@media (prefers-color-scheme: dark) {
+  #accountCentralBrowser {
+    background-color: var(--tb-msg-surface) !important;
+  }
+}
+
+/* ── about:message — message reading pane ─────────────────────────────────
+   aboutMessage.xhtml is chrome-privileged, loaded two browser levels deep:
+     messenger.xhtml → about:3pane browser → about:message browser
+   @-moz-document doesn't reach two levels deep, so we use element IDs
+   directly. The IDs below are unique to aboutMessage.xhtml.
+
+   Source of blue-purple: messageHeader.css sets
+     #messagepanebox { background-color: var(--layout-background-1) }
+   where --layout-background-1: light-dark(gray-05, #27272a) in dark mode.
+   We override the color tokens so the light-dark() chain resolves to
+   neutral black instead.                                                    */
+@media (prefers-color-scheme: dark) {
+  #messagepanebox,
+  #messagepaneboxwrapper {
+    --color-gray-90: #181818 !important;
+    --color-gray-80: #272727 !important;
+    --color-gray-70: #3f3f3f !important;
+    --color-gray-60: #525252 !important;
+    background-color: rgb(18, 18, 18) !important;
+  }
+
+  #messageHeader,
+  #header-view-toolbar,
+  #headerSubjectSecurityContainer {
+    background-color: rgb(24, 24, 24) !important;
+    --color-gray-80: #272727 !important;
+    --layout-background-1: rgb(24, 24, 24) !important;
+  }
+}
+
+/* ── Account Settings window ────────────────────────────────────────────────
+   --background-color-canvas resolves to #42414d (purple) for dialog roots;
+   --layout-background-2 → #27272a (zinc) drives the sidebar colour.
+   Target both the outer shell and the inner panel frames (am-*.xhtml).      */
+@-moz-document url-prefix("chrome://messenger/content/messenger/AccountManager.xhtml"),
+               url-prefix("chrome://messenger/content/messenger/am-") {
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color-canvas: rgb(18, 18, 18) !important;
+      --layout-background-2: rgb(24, 24, 24) !important;
+      --in-content-categories-background: rgb(24, 24, 24) !important;
+    }
+    /* Selected account: match the folder/email row selection blue */
+    #categories > .category[selected],
+    #categories > .category.selected {
+      background-color: AccentColor !important;
+      color: AccentColorText !important;
+    }
+  }
+}
+
+/* ── Primary action buttons: darken the blue ────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  #folderPaneWriteMessage,
+  #sidePanelNewEvent,
+  #sidePanelNewTask {
+    --button-background-color-primary:
+      color-mix(in srgb, AccentColor 50%, black) !important;
+    --button-background-color-primary-hover:
+      color-mix(in srgb, AccentColor 40%, black) !important;
+    --button-background-color-primary-active:
+      color-mix(in srgb, AccentColor 30%, black) !important;
+  }
+}
