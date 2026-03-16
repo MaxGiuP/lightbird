@@ -1,33 +1,115 @@
 
-/* ── gconversation extension ───────────────────────────────────────────────
-   URL: chrome://conversations/content/stub.html
-   Dark mode vars use zinc grays (rgb(56,56,61), #3f3f46) — override to
-   neutral black to match the rest of the theme.  */
-@-moz-document url-prefix("chrome://conversations/content/stub.html") {
+/* ── gconversation stub.html wrapper ───────────────────────────────────────
+   Overrides CSS variable defaults and forces solid dark/light surfaces on
+   the conversation chrome (header, message cards, reply box).               */
+@-moz-document regexp("^moz-extension://.*/(?:stub\\.html|stubWrapper\\.xhtml)(?:[?#].*)?$"),
+               url-prefix("chrome://conversations/content/stub.html"),
+               url-prefix("chrome://conversations/content/stubWrapper.xhtml") {
+  :root {
+    --application-background-color: light-dark(rgb(250, 250, 250), rgb(18, 18, 18)) !important;
+    --application-foreground-color: light-dark(rgb(20, 20, 20), rgb(249, 249, 250)) !important;
+    --border-color: light-dark(#d5d5d8, #3a3a3a) !important;
+    --dull-foreground-color: light-dark(#666, #999) !important;
+  }
+  html,
+  body,
+  #conversationWrapper,
+  #messageList {
+    background-color: var(--application-background-color) !important;
+    background-image: none !important;
+    opacity: 1 !important;
+  }
+  body {
+    color: var(--application-foreground-color) !important;
+  }
+  .message {
+    background-color: light-dark(rgb(255, 255, 255), rgb(24, 24, 24)) !important;
+  }
+  .conversationHeader,
+  .replyBox {
+    background-color: light-dark(rgb(245, 245, 247), rgb(28, 28, 28)) !important;
+  }
+  .replyBox {
+    color: light-dark(rgb(60, 60, 60), rgb(180, 180, 180)) !important;
+  }
+  .message iframe {
+    background-color: var(--application-background-color) !important;
+    opacity: 1 !important;
+  }
+
   @media (prefers-color-scheme: dark) {
     :root {
+      --border-color: #3a3a3a !important;
       --application-background-color: rgb(18, 18, 18) !important;
       --application-foreground-color: rgb(249, 249, 250) !important;
-      --border-color: #3a3a3a !important;
-      --dull-foreground-color: #999 !important;
     }
-    body {
+
+    html,
+    body,
+    #conversationWrapper,
+    #messageList {
       background-color: rgb(18, 18, 18) !important;
+      color: rgb(249, 249, 250) !important;
     }
+
     .message {
       background-color: rgb(24, 24, 24) !important;
+      color: rgb(249, 249, 250) !important;
     }
-    .conversationHeader {
+
+    .conversationHeader,
+    .conversationHeaderWrapper,
+    .replyBox,
+    conversation-header,
+    conversation-footer {
       background-color: rgb(28, 28, 28) !important;
+      color: rgb(249, 249, 250) !important;
     }
-    .replyBox {
-      background-color: rgb(28, 28, 28) !important;
-      color: rgb(180, 180, 180) !important;
+
+    .messageHeader,
+    .messageBody,
+    .detailsLine,
+    .messageBody *,
+    .author,
+    .subject,
+    .to,
+    .bzTo,
+    .snippet,
+    .smallEmail,
+    .link,
+    .date,
+    .star,
+    .tags,
+    .tags li,
+    .options,
+    .options *,
+    .attachments,
+    .attachments *,
+    .footerActions,
+    .footerActions *,
+    button,
+    button *,
+    a,
+    a:link,
+    a:visited {
+      color: rgb(249, 249, 250) !important;
+    }
+
+    a:hover,
+    a:active,
+    a:focus,
+    .link:hover,
+    .link:focus {
+      color: rgb(186, 214, 255) !important;
+    }
+
+    .message iframe {
+      opacity: 1 !important;
     }
   }
 }
 
-/* ── Account Central page ─────────────────────────────────────────────────
+/* ── Account Central page ──────────────────────────────────────────────────
    URL: chrome://messenger/content/msgAccountCentral.xhtml?folderURI=...
    The page sets --bg-color: #2f2f33 in dark mode; override to near-black.  */
 @-moz-document url-prefix("chrome://messenger/content/msgAccountCentral.xhtml") {
@@ -48,5 +130,48 @@
       background-color: rgb(18, 18, 18) !important;
       background-image: none !important;
     }
+  }
+}
+
+/* ── about:message reader pane ─────────────────────────────────────────────
+   Reader-only opaque surfaces: keep global UI transparency intact.          */
+@-moz-document url-prefix("about:message") {
+  html,
+  body {
+    background-color: light-dark(rgb(250, 250, 250), rgb(18, 18, 18)) !important;
+    background-image: none !important;
+    opacity: 1 !important;
+  }
+  :root {
+    --viewBackground: light-dark(rgb(250, 250, 250), rgb(18, 18, 18)) !important;
+    --background-color-canvas: light-dark(rgb(250, 250, 250), rgb(18, 18, 18)) !important;
+    --color-canvas: light-dark(rgb(250, 250, 250), rgb(18, 18, 18)) !important;
+    --layout-background-0: light-dark(rgb(250, 250, 250), rgb(18, 18, 18)) !important;
+    --layout-background-1: light-dark(rgb(250, 250, 250), rgb(18, 18, 18)) !important;
+  }
+}
+
+/* ── Add-ons install/permission surfaces shown inside content pages ─────── */
+@-moz-document url-prefix("about:addons"),
+               domain("addons.thunderbird.net") {
+  :root,
+  html,
+  body,
+  dialog,
+  [role="dialog"],
+  .dialog,
+  .modal,
+  .modal-content,
+  .popup-notification-body,
+  .PermissionDialog,
+  .Card,
+  .Panel,
+  .panel,
+  .amo-modal,
+  .ReactModal__Content {
+    background-color: light-dark(rgb(242, 242, 242), rgb(24, 24, 24)) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    opacity: 1 !important;
   }
 }

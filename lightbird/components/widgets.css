@@ -127,6 +127,7 @@ global-search-bar {
     left: 11px;
     color: var(--lb-text-ghost-color);
     z-index: 1;
+    pointer-events: none;
   }
 }
 input {

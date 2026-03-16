@@ -5,22 +5,6 @@
 
 @import "lightbird/lightbird.css";
 
-/* ── Hide top header / extension toolbar completely ────────────────────── */
-#navigation-toolbox,
-#unifiedToolbar,
-#unifiedToolbarContainer,
-.unified-toolbar {
-  display: none !important;
-  min-height: 0 !important;
-}
-
-/* ── Remove the margin Lightbird reserves for the hidden toolbar ─────────
-   spaces.css sets margin-top: var(--lb-toolbar-height) on .spaces-toolbar
-   so that icons don't sit under the unified toolbar. Now it's gone.       */
-.spaces-toolbar:not([hidden]) {
-  margin-top: 0 !important;
-}
-
 /* ── Remove tabmail border + radius that causes the 1-2px pane gap ───────
    main.css gives #tabmail border: 1px + border-top-left-radius: 8px      */
 #tabmail {
@@ -28,10 +12,12 @@
   border-radius: 0 !important;
 }
 
-/* ── Whole-window transparency — OS desktop faintly visible behind app ─── */
-/* The background-image here is the solid fallback — it is always visible
-   and opaque. The ::before layer uses backdrop-filter to blur the image
-   that sits behind it. If ::before fails to render the image still shows. */
+/* ── Whole-window background — blurred wallpaper ───────────────────────── */
+/* The background-image on the window is the fallback (shown if ::before
+   fails). The ::before pseudo-element renders a blurred copy on top.
+   z-index:-1 keeps it behind all child elements while still being visible
+   against the window's own background. The window needs isolation:isolate
+   so that z-index:-1 clips to the window stacking context, not the page. */
 #messengerWindow {
   opacity: 0.95 !important;
   background-image: url("images/winmail.png") !important;
@@ -39,19 +25,18 @@
   background-position: center !important;
   background-attachment: fixed !important;
   position: relative !important;
+  isolation: isolate !important;
 }
 
-/* ::before renders the blurred copy of the wallpaper on top of the fallback.
-   inset: -40px extends it beyond the viewport edges to prevent blurry-edge
-   fringing. If ::before fails in XUL the unblurred fallback above shows.   */
 #messengerWindow::before {
   content: "" !important;
   position: fixed !important;
-  inset: -40px !important;
+  inset: -60px !important;
+  z-index: -1 !important;
   background-image: url("images/winmail.png") !important;
   background-size: cover !important;
   background-position: center !important;
-  filter: blur(20px) !important;
+  filter: blur(60px) brightness(0.85) !important;
   pointer-events: none !important;
 }
 
@@ -67,12 +52,14 @@
   --foldertree-background: transparent !important;
   --sidebar-background: transparent !important;
   --viewBackground: transparent !important;
-  --lb-panel-bgcolor: rgba(255, 255, 255, 0.22) !important;
+  --lb-panel-bgcolor: rgba(255, 255, 255, 0.12) !important;
+  /* Unified accent — light mode uses raw system accent */
+  --tb-accent: AccentColor;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --tb-dark-surface: rgb(18, 18, 18) !important;
+    --tb-dark-surface: rgba(12, 12, 12, 0.18) !important;
     --tb-msg-surface: rgb(18, 18, 18) !important;
     --lb-panel-bgcolor: rgba(0, 0, 0, 0.40) !important;
     /* Override any blue-biased Lightbird/theme canvas variables */
@@ -80,6 +67,19 @@
     --background-color-canvas: rgb(0, 0, 0) !important;
     --background-color-box: rgba(10, 10, 10, 0.92) !important;
     --background-color-deemphasized: rgba(6, 6, 6, 0.86) !important;
+    /* ── Unified accent — same system AccentColor as the contacts button.
+       All blue in the app derives from this one variable.                    */
+    --tb-accent: AccentColor !important;
+    --selected-item-color: var(--tb-accent) !important;
+    --selected-item-text-color: rgba(255, 255, 255, 0.92) !important;
+    --list-container-background-selected-current:
+      color-mix(in srgb, var(--tb-accent) 22%, transparent) !important;
+    --list-container-background-selected-current-focused:
+      color-mix(in srgb, var(--tb-accent) 38%, transparent) !important;
+    --list-container-background-hover:
+      rgba(255, 255, 255, 0.06) !important;
+    --color-accent-primary: var(--tb-accent) !important;
+    --color-accent-primary-interactive: var(--tb-accent) !important;
   }
 }
 
@@ -93,12 +93,21 @@
 #view-box,
 #calSidebar,
 #threadPane,
-#threadPaneWrapper,
-#messagepanebox,
-#messageBrowser {
+#threadPaneWrapper {
   background-color: color-mix(in srgb, var(--lb-panel-bgcolor) 90%, transparent) !important;
   background-image: none !important;
   backdrop-filter: blur(14px) saturate(115%) !important;
+}
+
+/* ── Message / gconversation pane — fully opaque in both modes ───────────── */
+#messagePane,
+#messagepanebox,
+#messageBrowser,
+#multimessage {
+  --layout-background-1: white !important;
+  background-color: white !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -113,14 +122,24 @@
   #threadPane,
   #threadPaneWrapper {
     background-color: var(--tb-dark-surface) !important;
-    backdrop-filter: none !important;
+    backdrop-filter: blur(14px) saturate(115%) !important;
   }
-  /* Message reading pane — solid surface (content fills the frame, no blur needed).
-     #messagepanebox / #messageBrowser kept for standalone window fallback.    */
+  /* Message reading pane — fully opaque, no blur bleed-through.
+     #multimessage is the gconversation host browser element.                  */
   #messagePane,
   #messagepanebox,
-  #messageBrowser {
+  #messageBrowser,
+  #multimessage {
+    --layout-background-1: rgb(18, 18, 18) !important;
     background-color: var(--tb-msg-surface) !important;
+    backdrop-filter: none !important;
+  }
+
+  #tabs-toolbar,
+  #unifiedToolbarContainer,
+  #titlebar {
+    background-color: rgba(18, 18, 18, 0.92) !important;
+    background-image: none !important;
     backdrop-filter: none !important;
   }
 }
@@ -213,6 +232,36 @@ today-pane > *,
   background-image: none !important;
   backdrop-filter: blur(28px) saturate(130%) brightness(1.05) !important;
   color: #1a1a1a !important;
+}
+
+/* Folder/account selection in the left pane should follow the system accent,
+   not Thunderbird's fallback blue. */
+#folderTree li.selected > .container,
+#folderTree li.selected.current > .container,
+#folderTree li[aria-selected="true"] > .container {
+  background-color: color-mix(in srgb, var(--tb-accent) 24%, transparent) !important;
+  color: AccentColorText !important;
+}
+
+#folderTree:focus-within li.selected.current > .container,
+#folderTree:focus-within li[aria-selected="true"] > .container {
+  background-color: color-mix(in srgb, var(--tb-accent) 34%, transparent) !important;
+}
+
+#folderTree li.selected > .container::before,
+#folderTree li.selected.current > .container::before,
+#folderTree li[aria-selected="true"] > .container::before {
+  --indicator-background: var(--tb-accent) !important;
+}
+
+#folderTree li.selected > .container .icon,
+#folderTree li.selected > .container .name,
+#folderTree li.selected.current > .container .icon,
+#folderTree li.selected.current > .container .name,
+#folderTree li[aria-selected="true"] > .container .icon,
+#folderTree li[aria-selected="true"] > .container .name {
+  fill: currentColor !important;
+  color: currentColor !important;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -326,15 +375,15 @@ calendar-multiweek-view,
   height: 0.55em;
   margin-right: 0.5em;
   border-radius: 50%;
-  background-color: AccentColor;
-  box-shadow: 0 0 0 1px color-mix(in srgb, AccentColor 70%, black),
-              0 0 6px color-mix(in srgb, AccentColor 55%, transparent);
+  background-color: var(--tb-accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--tb-accent) 70%, black),
+              0 0 6px color-mix(in srgb, var(--tb-accent) 55%, transparent);
   vertical-align: 0.02em;
 }
 
-/* ── Selected row — soft blue tint ──────────────────────────────────────── */
+/* ── Selected row — uses --tb-accent (AccentColor in light, lightened in dark) */
 #threadTree treechildren::-moz-tree-row(selected) {
-  background-color: rgba(30, 110, 230, 0.18) !important;
+  background-color: color-mix(in srgb, var(--tb-accent) 18%, transparent) !important;
 }
 
 [is="tree-view-table-body"] tr.selected > td,
@@ -342,23 +391,29 @@ calendar-multiweek-view,
 [is="tree-view-table-body"] > .table-layout > tr.selected > td,
 [is="tree-view-table-body"] > .card-layout > tr.selected > td,
 [is="tree-view-table-body"] > .card-layout > tr[aria-selected="true"] > td {
-  background-color: rgba(30, 110, 230, 0.18) !important;
+  background-color: color-mix(in srgb, var(--tb-accent) 22%, transparent) !important;
   background-image: none !important;
 }
 
 /* Focused/active selected — slightly stronger */
 [is="tree-view-table-body"] tr.selected:focus-within > td,
 [is="tree-view-table-body"] tr[aria-selected="true"]:focus-within > td {
-  background-color: rgba(30, 110, 230, 0.28) !important;
+  background-color: color-mix(in srgb, var(--tb-accent) 36%, transparent) !important;
 }
 
-/* ── Context / right-click menus — fully opaque, no transparency ─────────── */
+/* ── Context / right-click menus and dropdown popups — fully opaque ─────── */
 menupopup,
 panel[type="autocomplete"],
-panel[type="autocomplete-richlistbox"] {
+panel[type="autocomplete-richlistbox"],
+panel[type="arrow"],
+panel.in-menulist,
+.panel-arrowcontainer,
+.panel-arrowcontent,
+panelview {
   --panel-background: rgb(242, 242, 242) !important;
   --panel-border-color: rgb(200, 200, 200) !important;
   --arrowpanel-background: rgb(242, 242, 242) !important;
+  --arrowpanel-border-color: rgb(200, 200, 200) !important;
   background-color: rgb(242, 242, 242) !important;
   backdrop-filter: none !important;
   opacity: 1 !important;
@@ -376,11 +431,20 @@ menu:hover {
 @media (prefers-color-scheme: dark) {
   menupopup,
   panel[type="autocomplete"],
-  panel[type="autocomplete-richlistbox"] {
+  panel[type="autocomplete-richlistbox"],
+  panel[type="arrow"],
+  panel.in-menulist,
+  .panel-arrowcontainer,
+  .panel-arrowcontent,
+  panelview {
     --panel-background: rgb(36, 36, 36) !important;
     --panel-border-color: rgb(60, 60, 60) !important;
     --arrowpanel-background: rgb(36, 36, 36) !important;
+    --arrowpanel-border-color: rgb(60, 60, 60) !important;
     background-color: rgb(36, 36, 36) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    opacity: 1 !important;
   }
   menuitem:hover,
   menu:hover {
@@ -388,14 +452,53 @@ menu:hover {
   }
 }
 
-/* ── App-switcher (spaces toolbar) active button — vivid system blue */
+/* Add-on install prompt panel shown from add-ons website/about:addons */
+#notification-popup,
+#notification-popup-box,
+#popup-notification-panel,
+#addon-install-confirmation-notification,
+#addon-webext-permissions-notification,
+#notification-popup popupnotification,
+#popup-notification-panel popupnotification,
+#popup-notification-panel .panel-arrowcontainer,
+#popup-notification-panel .panel-arrowcontent {
+  --panel-background: rgb(242, 242, 242) !important;
+  --panel-border-color: rgb(200, 200, 200) !important;
+  --arrowpanel-background: rgb(242, 242, 242) !important;
+  --arrowpanel-border-color: rgb(200, 200, 200) !important;
+  background-color: rgb(242, 242, 242) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  opacity: 1 !important;
+}
+
 @media (prefers-color-scheme: dark) {
-  .spaces-toolbar-button.current > img {
-    fill: AccentColor !important;
+  #notification-popup,
+  #notification-popup-box,
+  #popup-notification-panel,
+  #addon-install-confirmation-notification,
+  #addon-webext-permissions-notification,
+  #notification-popup popupnotification,
+  #popup-notification-panel popupnotification,
+  #popup-notification-panel .panel-arrowcontainer,
+  #popup-notification-panel .panel-arrowcontent {
+    --panel-background: rgb(24, 24, 24) !important;
+    --panel-border-color: rgb(60, 60, 60) !important;
+    --arrowpanel-background: rgb(24, 24, 24) !important;
+    --arrowpanel-border-color: rgb(60, 60, 60) !important;
+    background-color: rgb(24, 24, 24) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    opacity: 1 !important;
   }
-  .spaces-toolbar-button.current::before {
-    background-color: AccentColor !important;
-  }
+}
+
+/* ── App-switcher (spaces toolbar) active button — unified accent */
+#spacesToolbar .spaces-toolbar-button.current > img {
+  fill: var(--tb-accent) !important;
+}
+#spacesToolbar .spaces-toolbar-button.current::before {
+  background-color: var(--tb-accent) !important;
 }
 
 /* ── Standalone message window (double-click email → separate window) ────────
@@ -518,22 +621,165 @@ menu:hover {
     /* Selected account: match the folder/email row selection blue */
     #categories > .category[selected],
     #categories > .category.selected {
-      background-color: AccentColor !important;
+      background-color: var(--tb-accent) !important;
       color: AccentColorText !important;
     }
   }
 }
 
-/* ── Primary action buttons: darken the blue ────────────────────────────── */
+
+
+
+/* Reader pane only: opaque. Leave non-reading UI transparent. */
+#messagePane,
+#messagepane,
+#messagepanebox,
+#messageBrowser,
+#multimessage {
+  background-color: rgb(250, 250, 250) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+}
+
 @media (prefers-color-scheme: dark) {
-  #folderPaneWriteMessage,
-  #sidePanelNewEvent,
-  #sidePanelNewTask {
-    --button-background-color-primary:
-      color-mix(in srgb, AccentColor 50%, black) !important;
-    --button-background-color-primary-hover:
-      color-mix(in srgb, AccentColor 40%, black) !important;
-    --button-background-color-primary-active:
-      color-mix(in srgb, AccentColor 30%, black) !important;
+  #messagePane,
+  #messagepane,
+  #messagepanebox,
+  #messageBrowser,
+  #multimessage {
+    background-color: rgb(18, 18, 18) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* Calendar: make selected day cells visibly filled (not just border changes) */
+.minimonth-day[selected="true"],
+.calendar-month-day-box-current-month[selected="true"],
+.calendar-month-day-box-day-off[selected="true"],
+.calendar-month-day-box-other-month[selected="true"] {
+  background-color: color-mix(in srgb, AccentColor 28%, transparent) !important;
+  border: 0 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .minimonth-day[selected="true"],
+  .calendar-month-day-box-current-month[selected="true"],
+  .calendar-month-day-box-day-off[selected="true"],
+  .calendar-month-day-box-other-month[selected="true"] {
+    background-color: color-mix(in srgb, AccentColor 42%, transparent) !important;
+  }
+}
+
+
+/* ── Title bar: hide CSD buttons on Linux, keep unified toolbar visible ───────
+   #titlebar contains both the unified toolbar (New Message, Get Mail, etc.)
+   AND the CSD min/max/close buttons (.titlebar-buttonbox-container).
+   Hyprland provides its own window chrome, so we hide only the redundant CSD
+   buttons — the mail toolbar stays intact.
+   Lightbird's margin-top:48px on .spaces-toolbar correctly clears the
+   48px-tall unified toolbar when it is visible, so no override is needed.    */
+@media (-moz-platform: linux) {
+  .titlebar-buttonbox-container {
+    display: none !important;
+  }
+  /* Keep unified toolbar and tab bar draggable for window positioning */
+  #unifiedToolbarContainer,
+  #tabs-toolbar {
+    -moz-window-dragging: drag !important;
+  }
+}
+
+/* ── Folder pane header bar: always show (xulstore may persist hidden="true") */
+@media (-moz-platform: linux) {
+  #folderPaneHeaderBar {
+    display: flex !important;
+  }
+}
+
+/* ── Quick-filter bar: always show + search left / filter buttons right ───────
+   display:block overrides hidden="hidden" so the bar is always visible.
+   flex-wrap:nowrap keeps buttons on the same row as the textbox — without it
+   they can wrap to a second row, creating a visual/hit-test mismatch.
+   margin-inline-end:auto uses residual space (after textbox hits 450px max)
+   to push the button cluster flush to the right edge.
+   min-inline-size prevents the textbox collapsing to 0 in narrow panes.     */
+@media (-moz-platform: linux) {
+  #quick-filter-bar {
+    display: block !important;
+  }
+  #quickFilterBarContainer {
+    flex-wrap: nowrap !important;
+  }
+  #qfb-qs-textbox {
+    margin-inline-end: auto !important;
+    min-inline-size: 120px !important;
+  }
+
+}
+
+/* ── Transparent-background dialog fixes ─────────────────────────────────────
+   The global :root transparent overrides bleed into separate chrome windows.   */
+@-moz-document url-prefix("chrome://messenger/content/messenger/SearchDialog.xhtml"),
+               url-prefix("chrome://messenger/content/messenger/FilterListDialog.xhtml"),
+               url-prefix("chrome://messenger/content/messenger/FilterEditor.xhtml") {
+  :root {
+    background-color: rgb(242, 242, 242) !important;
+    color: rgb(30, 30, 30) !important;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      background-color: rgb(24, 24, 24) !important;
+      color: rgb(220, 220, 220) !important;
+    }
+  }
+}
+
+/* ── Add-on install / permissions dialogs — force opaque surfaces ──────────
+   These are separate mozapps chrome windows and don't reliably inherit the
+   generic popup fixes above. */
+@-moz-document url-prefix("chrome://mozapps/content/xpinstall/"),
+               url-prefix("chrome://mozapps/content/extensions/") {
+  :root,
+  window,
+  dialog,
+  .dialogOverlay,
+  .dialogBox,
+  #commonDialog,
+  #commonDialogBox,
+  #infoBody,
+  #permissionsBox,
+  #addon-webext-perm-list,
+  #addon-webext-perm-intro,
+  .contentPane,
+  .main-content,
+  .container {
+    background-color: rgb(242, 242, 242) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    opacity: 1 !important;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root,
+    window,
+    dialog,
+    .dialogOverlay,
+    .dialogBox,
+    #commonDialog,
+    #commonDialogBox,
+    #infoBody,
+    #permissionsBox,
+    #addon-webext-perm-list,
+    #addon-webext-perm-intro,
+    .contentPane,
+    .main-content,
+    .container {
+      background-color: rgb(24, 24, 24) !important;
+      background-image: none !important;
+      backdrop-filter: none !important;
+      opacity: 1 !important;
+      color: rgb(220, 220, 220) !important;
+    }
   }
 }

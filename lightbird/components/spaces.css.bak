@@ -28,13 +28,13 @@
       --spaces-button-active-text-color: var(--lb-text-color);
     }
     & > img {
-      fill: AccentColor !important;
+      fill: var(--button-primary-background-color) !important;
     }
     &::before {
       content: "";
       width: 3px;
       height: var(--lb-icon-line-lg);
-      background-color: AccentColor;
+      background-color: var(--button-primary-background-color);
       border-radius: 999px;
       position: absolute;
       left: 0;
