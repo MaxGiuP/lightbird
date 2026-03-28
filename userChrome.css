@@ -940,6 +940,26 @@ panel[type="arrow"] {
   }
 }
 
+/* ── Password / authentication dialogs — force opaque surfaces ──────────────
+   commonDialog.xhtml is used for all password prompts (IMAP, SMTP, OAuth).
+   The theme's transparent --layout-background-* vars leak into these windows
+   because they are separate top-level chrome windows with no wallpaper.     */
+@-moz-document url-prefix("chrome://global/content/commonDialog"),
+               url-prefix("chrome://global/content/selectDialog"),
+               url-prefix("chrome://global/content/alert") {
+  :root,
+  window,
+  dialog,
+  .dialogBox,
+  #commonDialog,
+  #commonDialogBox {
+    background-color: light-dark(rgb(242, 242, 242), rgb(28, 28, 28)) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    opacity: 1 !important;
+  }
+}
+
 /* ── Light mode: opaque white for thread/message pane ───────────────────────
    In dark mode these panes are transparent + blurred wallpaper (intentional).
    In light mode the same transparency makes them appear dark/murky.           */
