@@ -11,6 +11,7 @@
     --border-color: light-dark(#d5d5d8, #3a3a3a) !important;
     --dull-foreground-color: light-dark(#666, #999) !important;
   }
+
   html,
   body,
   #conversationWrapper,
@@ -117,35 +118,38 @@
 
   /* Conversations also mirrors the toggle state onto <html
      data-dark-reader-enabled="...">. Prefer that explicit signal over the
-     sometimes-stale media query inside the embedded browser. */
-  html[data-dark-reader-enabled="true"] {
-    color-scheme: dark !important;
-    --border-color: #3a3a3a !important;
-    --application-background-color: rgb(18, 18, 18) !important;
-    --application-foreground-color: rgb(249, 249, 250) !important;
-    --dull-foreground-color: #999 !important;
-  }
+     sometimes-stale media query inside the embedded browser.
+     Guard with prefers-color-scheme so light mode isn't forced dark. */
+  @media (prefers-color-scheme: dark) {
+    html[data-dark-reader-enabled="true"] {
+      color-scheme: dark !important;
+      --border-color: #3a3a3a !important;
+      --application-background-color: rgb(18, 18, 18) !important;
+      --application-foreground-color: rgb(249, 249, 250) !important;
+      --dull-foreground-color: #999 !important;
+    }
 
-  html[data-dark-reader-enabled="true"],
-  html[data-dark-reader-enabled="true"] body,
-  html[data-dark-reader-enabled="true"] #conversationWrapper,
-  html[data-dark-reader-enabled="true"] #messageList {
-    background-color: rgb(18, 18, 18) !important;
-    color: rgb(249, 249, 250) !important;
-  }
+    html[data-dark-reader-enabled="true"],
+    html[data-dark-reader-enabled="true"] body,
+    html[data-dark-reader-enabled="true"] #conversationWrapper,
+    html[data-dark-reader-enabled="true"] #messageList {
+      background-color: rgb(18, 18, 18) !important;
+      color: rgb(249, 249, 250) !important;
+    }
 
-  html[data-dark-reader-enabled="true"] .message {
-    background-color: rgb(24, 24, 24) !important;
-    color: rgb(249, 249, 250) !important;
-  }
+    html[data-dark-reader-enabled="true"] .message {
+      background-color: rgb(24, 24, 24) !important;
+      color: rgb(249, 249, 250) !important;
+    }
 
-  html[data-dark-reader-enabled="true"] .conversationHeader,
-  html[data-dark-reader-enabled="true"] .conversationHeaderWrapper,
-  html[data-dark-reader-enabled="true"] .replyBox,
-  html[data-dark-reader-enabled="true"] conversation-header,
-  html[data-dark-reader-enabled="true"] conversation-footer {
-    background-color: rgb(28, 28, 28) !important;
-    color: rgb(249, 249, 250) !important;
+    html[data-dark-reader-enabled="true"] .conversationHeader,
+    html[data-dark-reader-enabled="true"] .conversationHeaderWrapper,
+    html[data-dark-reader-enabled="true"] .replyBox,
+    html[data-dark-reader-enabled="true"] conversation-header,
+    html[data-dark-reader-enabled="true"] conversation-footer {
+      background-color: rgb(28, 28, 28) !important;
+      color: rgb(249, 249, 250) !important;
+    }
   }
 }
 

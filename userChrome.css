@@ -330,6 +330,7 @@ calendar-multiweek-view,
   }
 
   /* darken the header bar and filter bar specifically */
+  #threadPaneHeaderBar,
   #quick-filter-bar,
   .list-header-bar {
     background-color: rgba(0, 0, 0, 0.55) !important;
@@ -369,9 +370,9 @@ calendar-multiweek-view,
 [is="tree-view-table-body"] tr[data-properties~="unread"] .card-header-line,
 [is="tree-view-table-body"] tr[data-properties~="unread"] .card-secondary-line,
 [is="tree-view-table-body"] tr[data-properties~="unread"] td {
-  font-weight: 800 !important;
-  -webkit-text-stroke: 0.4px currentColor !important;
-  text-shadow: 0 0 0.6px currentColor !important;
+  font-weight: 700 !important;
+  -webkit-text-stroke: 0.3px currentColor !important;
+  text-shadow: 0 0 0.4px currentColor !important;
 }
 /* Unread dot indicator before time in card view */
 #threadTree[rows="thread-card"] .card-layout[data-properties~="unread"] .date::before {
@@ -609,27 +610,53 @@ panel[type="arrow"] {
    @-moz-document doesn't reach two levels deep, so we use element IDs
    directly. The IDs below are unique to aboutMessage.xhtml.
 
-   Source of blue-purple: messageHeader.css sets
-     #messagepanebox { background-color: var(--layout-background-1) }
-   where --layout-background-1: light-dark(gray-05, #27272a) in dark mode.
-   We override the color tokens so the light-dark() chain resolves to
-   neutral black instead.                                                    */
+   Root cause of purple-tinted / lighter header areas:
+   - layout.css maps --layout-background-0..4 to color-gray-90..50 in dark
+     mode, all of which carry a blue/purple hue (#18181b, #27272a, etc.)
+   - Variables not overridden cascade to descendants → buttons, avatar,
+     notification bar all get the purple-tinted intermediate grays
+   Fix: override the full gray ladder on #messagepanebox so every child
+   element inherits neutral dark values via CSS custom property inheritance. */
 @media (prefers-color-scheme: dark) {
   #messagepanebox,
   #messagepaneboxwrapper {
-    --color-gray-90: #181818 !important;
-    --color-gray-80: #272727 !important;
-    --color-gray-70: #3f3f3f !important;
-    --color-gray-60: #525252 !important;
+    /* Neutral gray scale — replaces purple-tinted Zinc palette */
+    --color-gray-05: #0f0f0f !important;
+    --color-gray-10: #141414 !important;
+    --color-gray-20: #1e1e1e !important;
+    --color-gray-30: #2a2a2a !important;
+    --color-gray-40: #383838 !important;
+    --color-gray-50: #505050 !important;
+    --color-gray-60: #3a3a3a !important;
+    --color-gray-70: #252525 !important;
+    --color-gray-80: #1a1a1a !important;
+    --color-gray-90: #121212 !important;
+    /* Explicit layout-background ladder */
+    --layout-background-0: rgb(18, 18, 18) !important;
+    --layout-background-1: rgb(22, 22, 22) !important;
+    --layout-background-2: rgb(26, 26, 26) !important;
+    --layout-background-3: rgb(32, 32, 32) !important;
+    --layout-background-4: rgb(40, 40, 40) !important;
     background-color: rgb(18, 18, 18) !important;
   }
 
+  /* Header bar: slightly elevated surface for visual separation */
   #messageHeader,
   #header-view-toolbar,
-  #headerSubjectSecurityContainer {
-    background-color: rgb(24, 24, 24) !important;
-    --color-gray-80: #272727 !important;
-    --layout-background-1: rgb(24, 24, 24) !important;
+  #headerSubjectSecurityContainer,
+  .main-header-area {
+    background-color: rgb(22, 22, 22) !important;
+    --layout-background-1: rgb(22, 22, 22) !important;
+  }
+
+  /* Attachment bar matches header */
+  #attachmentBar {
+    background-color: rgb(22, 22, 22) !important;
+  }
+
+  /* Notification bar (remote content, phishing warnings) */
+  #mail-notification-top {
+    background-color: rgb(22, 22, 22) !important;
   }
 }
 
@@ -717,9 +744,10 @@ panel[type="arrow"] {
   }
 }
 
-/* ── Inbox/thread pane header: always show (xulstore may persist hidden="true") */
+/* ── Pane headers: always show (xulstore may persist hidden="true") */
 @media (-moz-platform: linux) {
-  #threadPaneHeader {
+  #threadPaneHeader,
+  #folderPaneHeaderBar {
     display: flex !important;
   }
 }
@@ -909,6 +937,37 @@ panel[type="arrow"] {
       opacity: 1 !important;
       color: rgb(220, 220, 220) !important;
     }
+  }
+}
+
+/* ── Light mode: opaque white for thread/message pane ───────────────────────
+   In dark mode these panes are transparent + blurred wallpaper (intentional).
+   In light mode the same transparency makes them appear dark/murky.           */
+@media (prefers-color-scheme: light) {
+  #threadPane,
+  #threadPaneWrapper,
+  #threadPaneHeaderBar,
+  #threadCols,
+  #threadTree,
+  [is="tree-view-table"],
+  [is="tree-view-table-body"],
+  #quick-filter-bar,
+  .list-header-bar {
+    background-color: rgba(255, 255, 255, 0.92) !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* ── Light mode: keep sidebar selection text dark ────────────────────────────
+   AccentColorText can be white when the accent is dark, making selected folder
+   names invisible against the light sidebar background.                        */
+@media (prefers-color-scheme: light) {
+  #folderTree li.selected > .container,
+  #folderTree li.selected.current > .container,
+  #folderTree li[aria-selected="true"] > .container,
+  #folderTree:focus-within li.selected.current > .container,
+  #folderTree:focus-within li[aria-selected="true"] > .container {
+    color: #1a1a1a !important;
   }
 }
 
