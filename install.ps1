@@ -31,31 +31,56 @@ if (-not (Test-Path $ProfilesIni)) {
     Err "profiles.ini not found: $ProfilesIni"
 }
 
-# Parse profiles.ini to find the Default=1 profile
-$ProfileDir = $null
-$currentPath = $null
-$currentIsRelative = $true
-$currentDefault = $false
+# Parse profiles.ini.
+# Modern Thunderbird writes an [Install<hash>] section whose Default= key
+# points to the profile that was last actually launched — prefer that over
+# the legacy Default=1 flag inside [Profile...] sections, which can point
+# to an old .default folder that is no longer used.
+$lines = Get-Content $ProfilesIni
 
-foreach ($line in Get-Content $ProfilesIni) {
+# Strategy 1: [Install...] section — most reliable
+$installDefault = $null
+$inInstall = $false
+foreach ($line in $lines) {
     $line = $line.Trim()
-    if ($line -match '^\[Profile') {
-        # Save previous section if it was the default
-        if ($currentDefault -and $currentPath) {
-            $ProfileDir = if ($currentIsRelative) { Join-Path $TbDir $currentPath } else { $currentPath }
-            break
-        }
-        $currentPath = $null; $currentIsRelative = $true; $currentDefault = $false
+    if ($line -match '^\[Install')          { $inInstall = $true; continue }
+    if ($line -match '^\[')                 { $inInstall = $false; continue }
+    if ($inInstall -and $line -match '^Default=(.+)') { $installDefault = $Matches[1]; break }
+}
+
+$ProfileDir = $null
+if ($installDefault) {
+    # Path may be relative (Profiles/xxx) or absolute
+    $candidate = if ([System.IO.Path]::IsPathRooted($installDefault)) {
+        $installDefault
+    } else {
+        Join-Path $TbDir $installDefault
     }
-    elseif ($line -match '^Path=(.+)')     { $currentPath       = $Matches[1] }
-    elseif ($line -eq 'IsRelative=0')      { $currentIsRelative = $false }
-    elseif ($line -eq 'Default=1')         { $currentDefault    = $true }
+    if (Test-Path $candidate) { $ProfileDir = $candidate }
 }
-# Catch last section
-if (-not $ProfileDir -and $currentDefault -and $currentPath) {
-    $ProfileDir = if ($currentIsRelative) { Join-Path $TbDir $currentPath } else { $currentPath }
+
+# Strategy 2: [Profile...] section with Default=1
+if (-not $ProfileDir) {
+    $currentPath = $null; $currentIsRelative = $true; $currentDefault = $false
+    foreach ($line in $lines) {
+        $line = $line.Trim()
+        if ($line -match '^\[Profile') {
+            if ($currentDefault -and $currentPath) {
+                $ProfileDir = if ($currentIsRelative) { Join-Path $TbDir $currentPath } else { $currentPath }
+                break
+            }
+            $currentPath = $null; $currentIsRelative = $true; $currentDefault = $false
+        }
+        elseif ($line -match '^Path=(.+)')  { $currentPath      = $Matches[1] }
+        elseif ($line -eq 'IsRelative=0')   { $currentIsRelative = $false }
+        elseif ($line -eq 'Default=1')      { $currentDefault   = $true }
+    }
+    if (-not $ProfileDir -and $currentDefault -and $currentPath) {
+        $ProfileDir = if ($currentIsRelative) { Join-Path $TbDir $currentPath } else { $currentPath }
+    }
 }
-# Fallback: newest *.default-release or *.default folder
+
+# Strategy 3: newest *.default-release or *.default folder
 if (-not $ProfileDir) {
     $ProfileDir = Get-ChildItem $TbDir -Directory |
         Where-Object { $_.Name -match '\.(default-release|default)$' } |

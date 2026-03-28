@@ -55,6 +55,22 @@ esac
 PROFILES_INI="${TB_DIR}/profiles.ini"
 [[ -f "$PROFILES_INI" ]] || die "profiles.ini not found: $PROFILES_INI"
 
+# Strategy 1: [Install...] section — the profile Thunderbird actually launched last
+_find_profile_install() {
+    awk -v tb="$TB_DIR" '
+        /^\[Install/  { install=1; next }
+        /^\[/         { install=0 }
+        install && /^Default=/ {
+            p = substr($0, 9)
+            # relative if it does not start with / or a drive letter
+            if (p !~ /^\// && p !~ /^[A-Za-z]:/) print tb "/" p
+            else print p
+            exit
+        }
+    ' "$PROFILES_INI"
+}
+
+# Strategy 2: [Profile...] section with Default=1
 _find_profile_python() {
     python3 - "$PROFILES_INI" "$TB_DIR" 2>/dev/null <<'PYEOF'
 import configparser, sys
@@ -83,12 +99,15 @@ _find_profile_awk() {
     ' "$PROFILES_INI"
 }
 
+# Strategy 3: newest *.default-release or *.default folder
 _find_profile_newest() {
     ls -dt "${TB_DIR}"/*.default-release "${TB_DIR}"/*.default 2>/dev/null | head -1
 }
 
-PROFILE_DIR=""
-command -v python3 &>/dev/null && PROFILE_DIR="$(_find_profile_python)"
+PROFILE_DIR="$(_find_profile_install)"
+[[ -n "$PROFILE_DIR" && -d "$PROFILE_DIR" ]] || {
+    command -v python3 &>/dev/null && PROFILE_DIR="$(_find_profile_python)"
+}
 [[ -n "$PROFILE_DIR" ]] || PROFILE_DIR="$(_find_profile_awk)"
 [[ -n "$PROFILE_DIR" ]] || PROFILE_DIR="$(_find_profile_newest)"
 
