@@ -328,6 +328,12 @@ calendar-multiweek-view,
     background-color: var(--tb-dark-surface) !important;
     backdrop-filter: none !important;
   }
+
+  /* darken the header bar and filter bar specifically */
+  #quick-filter-bar,
+  .list-header-bar {
+    background-color: rgba(0, 0, 0, 0.55) !important;
+  }
 }
 
 /* ── Thread/folder row backgrounds — transparent so blur shows through ───── */
