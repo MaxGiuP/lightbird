@@ -150,6 +150,18 @@ cp    "${SCRIPT_DIR}/userContent.css" "${CHROME_DIR}/userContent.css" && ok "use
 rm -rf "${CHROME_DIR}/lightbird" && cp -r "${SCRIPT_DIR}/lightbird" "${CHROME_DIR}/lightbird" && ok "lightbird/"
 rm -rf "${CHROME_DIR}/images"    && cp -r "${SCRIPT_DIR}/images"    "${CHROME_DIR}/images"    && ok "images/"
 
+# ── Install patched extensions ────────────────────────────────────────────────
+EXT_SRC="${SCRIPT_DIR}/extensions"
+EXT_DIR="${PROFILE_DIR}/extensions"
+if [[ -d "$EXT_SRC" ]]; then
+    mkdir -p "$EXT_DIR"
+    for xpi in "${EXT_SRC}"/*.xpi; do
+        [[ -f "$xpi" ]] || continue
+        cp "$xpi" "${EXT_DIR}/$(basename "$xpi")"
+        ok "extension: $(basename "$xpi")"
+    done
+fi
+
 # ── Merge user.js ─────────────────────────────────────────────────────────────
 hdr "Installing preferences..."
 SRC_JS="${SCRIPT_DIR}/user.js"
