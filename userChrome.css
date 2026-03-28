@@ -711,32 +711,11 @@ panel[type="arrow"] {
   }
 }
 
-/* ── Folder pane header bar: always show (xulstore may persist hidden="true") */
+/* ── Inbox/thread pane header: always show (xulstore may persist hidden="true") */
 @media (-moz-platform: linux) {
-  #folderPaneHeaderBar {
+  #threadPaneHeader {
     display: flex !important;
   }
-}
-
-/* ── Quick-filter bar: always show + search left / filter buttons right ───────
-   display:block overrides hidden="hidden" so the bar is always visible.
-   flex-wrap:nowrap keeps buttons on the same row as the textbox — without it
-   they can wrap to a second row, creating a visual/hit-test mismatch.
-   margin-inline-end:auto uses residual space (after textbox hits 450px max)
-   to push the button cluster flush to the right edge.
-   min-inline-size prevents the textbox collapsing to 0 in narrow panes.     */
-@media (-moz-platform: linux) {
-  #quick-filter-bar {
-    display: block !important;
-  }
-  #quickFilterBarContainer {
-    flex-wrap: nowrap !important;
-  }
-  #qfb-qs-textbox {
-    margin-inline-end: auto !important;
-    min-inline-size: 120px !important;
-  }
-
 }
 
 /* ── Search / filter utility windows — force opaque surfaces ───────────────
