@@ -39,12 +39,17 @@ for arg in "$@"; do
 done
 
 # ── Detect OS ─────────────────────────────────────────────────────────────────
-case "$(uname -s)" in
-    Linux*)               OS=linux   ;;
-    Darwin*)              OS=macos   ;;
+_UNAME="$(uname -s)"
+case "$_UNAME" in
+    Linux*)   OS=linux   ;;
+    Darwin*)  OS=macos   ;;
     MINGW*|MSYS*|CYGWIN*) OS=windows ;;
-    *) die "Unsupported OS: $(uname -s)\n  Supported: Linux, macOS, Windows (Git Bash / MSYS2 / Cygwin)" ;;
+    *) die "Unsupported OS: $_UNAME\n  Supported: Linux, macOS, Windows (Git Bash / MSYS2 / Cygwin / WSL)" ;;
 esac
+
+# APPDATA is a Windows-only env var — if it's set we're on a Windows host
+# regardless of what uname says (covers Git Bash, Cygwin, MSYS2, WSL, etc.)
+[[ -n "${APPDATA:-}" ]] && OS=windows
 
 # ── Thunderbird data directory ────────────────────────────────────────────────
 case "$OS" in
@@ -55,16 +60,26 @@ case "$OS" in
         TB_DIR="${HOME}/Library/Thunderbird"
         ;;
     windows)
-        [[ -n "${APPDATA:-}" ]] \
-            || die "APPDATA is not set.\n  Run this script from Git Bash, MSYS2, or Cygwin."
-        if command -v cygpath &>/dev/null; then
-            # -m = mixed format: C:/Users/... (forward slashes, Windows drive letter)
-            # This works with both MSYS2 bash tools AND Windows-native Python3.
-            # Do NOT use -u here: /c/Users/... paths confuse Windows-native Python3.
-            TB_DIR="$(cygpath -m "${APPDATA}")/Thunderbird"
+        if [[ -n "${APPDATA:-}" ]]; then
+            if command -v cygpath &>/dev/null; then
+                # -m = mixed format: C:/Users/... works with bash tools AND Windows Python3
+                TB_DIR="$(cygpath -m "${APPDATA}")/Thunderbird"
+            else
+                # Backslash swap: C:\Users\... -> C:/Users/...
+                TB_DIR="${APPDATA//\\//}/Thunderbird"
+            fi
         else
-            # Simple backslash swap — APPDATA is already C:\Users\..., just normalise slashes
-            TB_DIR="${APPDATA//\\//}/Thunderbird"
+            # WSL without APPDATA — read it from Windows via cmd.exe
+            _win_appdata="$(cmd.exe /c 'echo %APPDATA%' 2>/dev/null | tr -d '\r\n')"
+            [[ -n "$_win_appdata" ]] \
+                || die "Could not find Windows APPDATA.\n  Run from Git Bash, MSYS2, Cygwin, or WSL."
+            if command -v wslpath &>/dev/null; then
+                TB_DIR="$(wslpath "$_win_appdata")/Thunderbird"
+            else
+                _drive="${_win_appdata:0:1}"; _drive="${_drive,,}"
+                _rest="${_win_appdata:3}"
+                TB_DIR="/mnt/${_drive}/${_rest//\\//}/Thunderbird"
+            fi
         fi
         ;;
 esac
