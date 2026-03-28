@@ -142,8 +142,12 @@ if (Test-Path $ExtSrc) {
     $ExtDir = Join-Path $ProfileDir 'extensions'
     New-Item -ItemType Directory -Force -Path $ExtDir | Out-Null
     Get-ChildItem $ExtSrc -Filter '*.xpi' | ForEach-Object {
-        Copy-Item $_.FullName (Join-Path $ExtDir $_.Name) -Force
-        Ok "extension: $($_.Name)"
+        try {
+            Copy-Item $_.FullName (Join-Path $ExtDir $_.Name) -Force
+            Ok "extension: $($_.Name)"
+        } catch {
+            Write-Host "  ! Could not copy $($_.Name) — close Thunderbird first, then re-run." -ForegroundColor Yellow
+        }
     }
 }
 
