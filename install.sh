@@ -51,6 +51,11 @@ esac
 # regardless of what uname says (covers Git Bash, Cygwin, MSYS2, WSL, etc.)
 [[ -n "${APPDATA:-}" ]] && OS=windows
 
+# WSL: uname says Linux but /proc/version contains "microsoft" or "WSL"
+if [[ "$OS" == "linux" ]] && grep -qiE 'microsoft|WSL' /proc/version 2>/dev/null; then
+    OS=windows
+fi
+
 # ── Thunderbird data directory ────────────────────────────────────────────────
 case "$OS" in
     linux)
