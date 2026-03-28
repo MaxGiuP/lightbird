@@ -14,4 +14,5 @@
 @import "components/widgets.css";
 
 /* pages */
-@import "components/about.css";
+@import "pages/about.css";
+@import "pages/welcome.css";

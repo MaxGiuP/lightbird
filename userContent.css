@@ -33,8 +33,15 @@
     color: light-dark(rgb(60, 60, 60), rgb(180, 180, 180)) !important;
   }
   .message iframe {
-    background-color: var(--application-background-color) !important;
+    background-color: rgb(250, 250, 250) !important;
+    background-image: none !important;
+    color-scheme: light !important;
     opacity: 1 !important;
+  }
+  html[data-dark-reader-enabled="true"] .message iframe {
+    background-color: rgb(18, 18, 18) !important;
+    background-image: none !important;
+    color-scheme: dark !important;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -106,6 +113,39 @@
     .message iframe {
       opacity: 1 !important;
     }
+  }
+
+  /* Conversations also mirrors the toggle state onto <html
+     data-dark-reader-enabled="...">. Prefer that explicit signal over the
+     sometimes-stale media query inside the embedded browser. */
+  html[data-dark-reader-enabled="true"] {
+    color-scheme: dark !important;
+    --border-color: #3a3a3a !important;
+    --application-background-color: rgb(18, 18, 18) !important;
+    --application-foreground-color: rgb(249, 249, 250) !important;
+    --dull-foreground-color: #999 !important;
+  }
+
+  html[data-dark-reader-enabled="true"],
+  html[data-dark-reader-enabled="true"] body,
+  html[data-dark-reader-enabled="true"] #conversationWrapper,
+  html[data-dark-reader-enabled="true"] #messageList {
+    background-color: rgb(18, 18, 18) !important;
+    color: rgb(249, 249, 250) !important;
+  }
+
+  html[data-dark-reader-enabled="true"] .message {
+    background-color: rgb(24, 24, 24) !important;
+    color: rgb(249, 249, 250) !important;
+  }
+
+  html[data-dark-reader-enabled="true"] .conversationHeader,
+  html[data-dark-reader-enabled="true"] .conversationHeaderWrapper,
+  html[data-dark-reader-enabled="true"] .replyBox,
+  html[data-dark-reader-enabled="true"] conversation-header,
+  html[data-dark-reader-enabled="true"] conversation-footer {
+    background-color: rgb(28, 28, 28) !important;
+    color: rgb(249, 249, 250) !important;
   }
 }
 

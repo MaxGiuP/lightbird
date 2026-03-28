@@ -405,18 +405,20 @@ calendar-multiweek-view,
 menupopup,
 panel[type="autocomplete"],
 panel[type="autocomplete-richlistbox"],
-panel[type="arrow"],
 panel.in-menulist,
-.panel-arrowcontainer,
-.panel-arrowcontent,
 panelview {
   --panel-background: rgb(242, 242, 242) !important;
   --panel-border-color: rgb(200, 200, 200) !important;
   --arrowpanel-background: rgb(242, 242, 242) !important;
   --arrowpanel-border-color: rgb(200, 200, 200) !important;
-  background-color: rgb(242, 242, 242) !important;
   backdrop-filter: none !important;
   opacity: 1 !important;
+}
+panel[type="arrow"],
+.panel-arrowcontainer {
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
 }
 menuitem,
 menu,
@@ -432,19 +434,20 @@ menu:hover {
   menupopup,
   panel[type="autocomplete"],
   panel[type="autocomplete-richlistbox"],
-  panel[type="arrow"],
   panel.in-menulist,
-  .panel-arrowcontainer,
-  .panel-arrowcontent,
   panelview {
     --panel-background: rgb(36, 36, 36) !important;
     --panel-border-color: rgb(60, 60, 60) !important;
     --arrowpanel-background: rgb(36, 36, 36) !important;
     --arrowpanel-border-color: rgb(60, 60, 60) !important;
-    background-color: rgb(36, 36, 36) !important;
-    background-image: none !important;
     backdrop-filter: none !important;
     opacity: 1 !important;
+  }
+  panel[type="arrow"],
+  .panel-arrowcontainer {
+    background-color: transparent !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
   }
   menuitem:hover,
   menu:hover {
@@ -460,7 +463,6 @@ menu:hover {
 #addon-webext-permissions-notification,
 #notification-popup popupnotification,
 #popup-notification-panel popupnotification,
-#popup-notification-panel .panel-arrowcontainer,
 #popup-notification-panel .panel-arrowcontent {
   --panel-background: rgb(242, 242, 242) !important;
   --panel-border-color: rgb(200, 200, 200) !important;
@@ -468,8 +470,22 @@ menu:hover {
   --arrowpanel-border-color: rgb(200, 200, 200) !important;
   background-color: rgb(242, 242, 242) !important;
   background-image: none !important;
+  background-clip: padding-box !important;
   backdrop-filter: none !important;
   opacity: 1 !important;
+}
+
+/* Match the content radius to the popup border radius so the fill never
+   peeks past the rounded border on context menus. */
+menupopup,
+panel[type="arrow"] {
+  --panel-border-radius: 8px !important;
+  --arrowpanel-border-radius: 8px !important;
+}
+#popup-notification-panel .panel-arrowcontainer {
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -480,7 +496,6 @@ menu:hover {
   #addon-webext-permissions-notification,
   #notification-popup popupnotification,
   #popup-notification-panel popupnotification,
-  #popup-notification-panel .panel-arrowcontainer,
   #popup-notification-panel .panel-arrowcontent {
     --panel-background: rgb(24, 24, 24) !important;
     --panel-border-color: rgb(60, 60, 60) !important;
@@ -488,8 +503,14 @@ menu:hover {
     --arrowpanel-border-color: rgb(60, 60, 60) !important;
     background-color: rgb(24, 24, 24) !important;
     background-image: none !important;
+    background-clip: padding-box !important;
     backdrop-filter: none !important;
     opacity: 1 !important;
+  }
+  #popup-notification-panel .panel-arrowcontainer {
+    background-color: transparent !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
   }
 }
 
@@ -718,20 +739,142 @@ menu:hover {
 
 }
 
-/* ── Transparent-background dialog fixes ─────────────────────────────────────
-   The global :root transparent overrides bleed into separate chrome windows.   */
-@-moz-document url-prefix("chrome://messenger/content/messenger/SearchDialog.xhtml"),
-               url-prefix("chrome://messenger/content/messenger/FilterListDialog.xhtml"),
-               url-prefix("chrome://messenger/content/messenger/FilterEditor.xhtml") {
-  :root {
-    background-color: rgb(242, 242, 242) !important;
-    color: rgb(30, 30, 30) !important;
+/* ── Search / filter utility windows — force opaque surfaces ───────────────
+   Lightbird sets :root:not(#messengerWindow){background:transparent}, which
+   hits these secondary windows. Target the real window roots directly and
+   override both the lwtheme vars and the concrete tree/list surfaces.       */
+#searchMailWindow[windowtype="mailnews:search"],
+#filterListDialog[windowtype="mailnews:filterlist"],
+#FilterEditor[windowtype="mailnews:filtereditor"],
+#mailViewSetupDialog[windowtype="mailnews:mailview"] {
+  appearance: none !important;
+  background: rgb(246, 246, 246) !important;
+  background-image: none !important;
+  color: rgb(30, 30, 30) !important;
+  --lwt-accent-color: rgb(246, 246, 246) !important;
+  --lwt-accent-color-inactive: rgb(246, 246, 246) !important;
+  --lwt-header-image: none !important;
+  --toolbar-bgcolor: rgb(246, 246, 246) !important;
+  --background-color-canvas: rgb(246, 246, 246) !important;
+  --background-color-box: rgb(236, 236, 236) !important;
+  --layout-background-0: rgb(246, 246, 246) !important;
+  --layout-background-1: rgb(246, 246, 246) !important;
+  --layout-background-2: rgb(236, 236, 236) !important;
+  --layout-background-3: rgb(236, 236, 236) !important;
+  --tree-view-bg: rgb(236, 236, 236) !important;
+  --thread-pane-background: rgb(236, 236, 236) !important;
+  --viewBackground: rgb(246, 246, 246) !important;
+}
+
+#searchMailWindow[windowtype="mailnews:search"] > *,
+#filterListDialog[windowtype="mailnews:filterlist"] > *,
+#FilterEditor[windowtype="mailnews:filtereditor"] > *,
+#FilterEditor[windowtype="mailnews:filtereditor"] > * > *,
+#mailViewSetupDialog[windowtype="mailnews:mailview"] > *,
+#mailViewSetupDialog[windowtype="mailnews:mailview"] > * > *,
+#searchMailWindow[windowtype="mailnews:search"] #searchTerms,
+#searchMailWindow[windowtype="mailnews:search"] #searchResults,
+#searchMailWindow[windowtype="mailnews:search"] #searchTermListBox,
+#filterListDialog[windowtype="mailnews:filterlist"] #filterHeader,
+#filterListDialog[windowtype="mailnews:filterlist"] #filterListGrid,
+#filterListDialog[windowtype="mailnews:filterlist"] #filterListBox,
+#filterListDialog[windowtype="mailnews:filterlist"] #filterActionButtons,
+#filterListDialog[windowtype="mailnews:filterlist"] #statusbar,
+#FilterEditor[windowtype="mailnews:filtereditor"] #filterNameBox,
+#FilterEditor[windowtype="mailnews:filtereditor"] #applyFiltersSettings,
+#FilterEditor[windowtype="mailnews:filtereditor"] #searchTermListBox,
+#FilterEditor[windowtype="mailnews:filtereditor"] #filterActionsBox,
+#FilterEditor[windowtype="mailnews:filtereditor"] #statusbar,
+#mailViewSetupDialog[windowtype="mailnews:mailview"] #searchTermListBox {
+  background-color: rgb(246, 246, 246) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+}
+
+#searchMailWindow[windowtype="mailnews:search"] #searchTermBox,
+#searchMailWindow[windowtype="mailnews:search"] #searchterms,
+#searchMailWindow[windowtype="mailnews:search"] #searchResultListBox,
+#searchMailWindow[windowtype="mailnews:search"] #threadTree,
+#searchMailWindow[windowtype="mailnews:search"] #threadTree treechildren,
+#filterListDialog[windowtype="mailnews:filterlist"] #filterList,
+#FilterEditor[windowtype="mailnews:filtereditor"] #searchTermList,
+#FilterEditor[windowtype="mailnews:filtereditor"] #filterActionList,
+#mailViewSetupDialog[windowtype="mailnews:mailview"] #searchTermList,
+#FilterEditor[windowtype="mailnews:filtereditor"] #applyFiltersSettings {
+  background-color: rgb(236, 236, 236) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+}
+
+#searchMailWindow[windowtype="mailnews:search"] treechildren::-moz-tree-row {
+  background-color: rgb(236, 236, 236) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  #searchMailWindow[windowtype="mailnews:search"],
+  #filterListDialog[windowtype="mailnews:filterlist"],
+  #FilterEditor[windowtype="mailnews:filtereditor"],
+  #mailViewSetupDialog[windowtype="mailnews:mailview"] {
+    background: rgb(18, 18, 18) !important;
+    background-image: none !important;
+    color: rgb(220, 220, 220) !important;
+    --lwt-accent-color: rgb(18, 18, 18) !important;
+    --lwt-accent-color-inactive: rgb(18, 18, 18) !important;
+    --lwt-header-image: none !important;
+    --toolbar-bgcolor: rgb(18, 18, 18) !important;
+    --background-color-canvas: rgb(18, 18, 18) !important;
+    --background-color-box: rgb(24, 24, 24) !important;
+    --layout-background-0: rgb(18, 18, 18) !important;
+    --layout-background-1: rgb(18, 18, 18) !important;
+    --layout-background-2: rgb(24, 24, 24) !important;
+    --layout-background-3: rgb(24, 24, 24) !important;
+    --tree-view-bg: rgb(24, 24, 24) !important;
+    --thread-pane-background: rgb(24, 24, 24) !important;
+    --viewBackground: rgb(18, 18, 18) !important;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      background-color: rgb(24, 24, 24) !important;
-      color: rgb(220, 220, 220) !important;
-    }
+
+  #searchMailWindow[windowtype="mailnews:search"] > *,
+  #filterListDialog[windowtype="mailnews:filterlist"] > *,
+  #FilterEditor[windowtype="mailnews:filtereditor"] > *,
+  #FilterEditor[windowtype="mailnews:filtereditor"] > * > *,
+  #mailViewSetupDialog[windowtype="mailnews:mailview"] > *,
+  #mailViewSetupDialog[windowtype="mailnews:mailview"] > * > *,
+  #searchMailWindow[windowtype="mailnews:search"] #searchTerms,
+  #searchMailWindow[windowtype="mailnews:search"] #searchResults,
+  #searchMailWindow[windowtype="mailnews:search"] #searchTermListBox,
+  #filterListDialog[windowtype="mailnews:filterlist"] #filterHeader,
+  #filterListDialog[windowtype="mailnews:filterlist"] #filterListGrid,
+  #filterListDialog[windowtype="mailnews:filterlist"] #filterListBox,
+  #filterListDialog[windowtype="mailnews:filterlist"] #filterActionButtons,
+  #filterListDialog[windowtype="mailnews:filterlist"] #statusbar,
+  #FilterEditor[windowtype="mailnews:filtereditor"] #filterNameBox,
+  #FilterEditor[windowtype="mailnews:filtereditor"] #applyFiltersSettings,
+  #FilterEditor[windowtype="mailnews:filtereditor"] #searchTermListBox,
+  #FilterEditor[windowtype="mailnews:filtereditor"] #filterActionsBox,
+  #FilterEditor[windowtype="mailnews:filtereditor"] #statusbar,
+  #mailViewSetupDialog[windowtype="mailnews:mailview"] #searchTermListBox {
+    background-color: rgb(18, 18, 18) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+  }
+
+  #searchMailWindow[windowtype="mailnews:search"] #searchTermBox,
+  #searchMailWindow[windowtype="mailnews:search"] #searchterms,
+  #searchMailWindow[windowtype="mailnews:search"] #searchResultListBox,
+  #searchMailWindow[windowtype="mailnews:search"] #threadTree,
+  #searchMailWindow[windowtype="mailnews:search"] #threadTree treechildren,
+  #filterListDialog[windowtype="mailnews:filterlist"] #filterList,
+  #FilterEditor[windowtype="mailnews:filtereditor"] #searchTermList,
+  #FilterEditor[windowtype="mailnews:filtereditor"] #filterActionList,
+  #mailViewSetupDialog[windowtype="mailnews:mailview"] #searchTermList,
+  #FilterEditor[windowtype="mailnews:filtereditor"] #applyFiltersSettings {
+    background-color: rgb(24, 24, 24) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+  }
+
+  #searchMailWindow[windowtype="mailnews:search"] treechildren::-moz-tree-row {
+    background-color: rgb(24, 24, 24) !important;
   }
 }
 
@@ -781,5 +924,17 @@ menu:hover {
       opacity: 1 !important;
       color: rgb(220, 220, 220) !important;
     }
+  }
+}
+
+/* ── Tab close button — adapts to colour scheme ─────────────────────────── */
+.tab-close-button {
+  -moz-context-properties: fill !important;
+  fill: rgba(0, 0, 0, 0.7) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tab-close-button {
+    fill: rgba(255, 255, 255, 0.9) !important;
   }
 }

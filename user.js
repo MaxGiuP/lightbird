@@ -3,9 +3,14 @@
   https://github.com/reizumii/lightbird
 */
 
-/* --- enable userchrome theming --- */
+/* enable userChrome.css / userContent.css theming */
 user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
-/*user_pref("svg.context-properties.content.enabled", true);*/
-/* Thunderbird built-in dark reader — gconversations uses this to apply
-   dark mode inside message iframes via its injectCss() mechanism. */
+
+/* enable SVG context-properties so theme icons receive fill colours */
+user_pref("svg.context-properties.content.enabled", true);
+
+/* built-in dark reader — used by Thunderbird Conversations inside message iframes */
 user_pref("mail.dark-reader.enabled", true);
+
+/* show compact header band in Thunderbird Conversations (1 = minimal) */
+user_pref("mail.show_headers", 1);

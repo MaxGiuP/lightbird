@@ -1,90 +1,104 @@
 <p align="center"><img width="240" src="lightbird/assets/logo.svg" alt="Lightbird logo"></p>
 
-<p align="center">An elegant theme modification for Thunderbird 🐦️</p>
+<p align="center">An elegant Thunderbird theme with frosted-glass UI, system accent colours, and a custom wallpaper background.</p>
 
-<p align="center"><img src="images/lightbird.webp" alt="Mockup of Lightbird"></p>
+<p align="center"><img src="images/lightbird.webp" alt="Lightbird preview"></p>
 
-> [!WARNING]
-> **This theme is currently an early work-in-progress and only light mode is supported!!** Only the Mail feature is almost finished as of now. Other parts of Thunderbird may appear broken for some time. Use at your own risk!
->
-> The only functional use case for now is just reading emails and viewing calendar events.
-
-## Version support
-
-The theme works best on the latest stable release.
-
-The latest ESR release may work but not guaranteed.
 
 ## Installation
 
-Start by [downloading the latest release](https://github.com/reizumii/lightbird/archive/refs/heads/main.zip) from this repository.
+### Quick install (Linux / macOS / Windows Git Bash)
 
-1. In Thunderbird, go to **Menu > Help > Troubleshooting Information**.
-2. Scroll down to the `Profile Folder` row and click `Open Folder`.
-3. Inside your Thunderbird profile folder, create a new folder named `chrome`.
-4. Extract the downloaded ZIP file and navigate its contents.
-5. Move the extracted contents to your newly created `chrome` folder.
-6. Move out the `user.js` file to your profile folder.
-6. Restart Thunderbird to apply the changes.
+```bash
+git clone https://github.com/reizumii/lightbird
+cd lightbird
+bash install.sh
+```
 
-Next, follow the [Adjustments](#adjustments) section to fully utilize Lightbird.
+The script auto-detects your OS, finds the default Thunderbird profile, copies the theme files into `chrome/`, and merges the required preferences into `user.js`.
 
-## Adjustments
+Restart Thunderbird after running the script.
 
-Thunderbird 140+ now offers Mica and Acrylic transparency for Windows 11 users. To enable it, toggle the following preferences in **Advanced Preferences**.
+### Manual install
 
-- `widget.windows.mica` - set it to `true`.
-- `widget.windows.mica.toplevel-backdrop` - set it to `1` (Mica) or `2` (Acrylic).
-- **Important**: Make sure your theme is set to **System theme — auto** for it to work!
+1. In Thunderbird, open **Menu → Help → Troubleshooting Information**.
+2. Click **Open Folder** next to *Profile Folder*.
+3. Inside the profile folder, create a `chrome/` directory if it does not exist.
+4. Copy these items from this repo into `chrome/`:
+   - `userChrome.css`
+   - `userContent.css`
+   - `lightbird/` (whole directory)
+   - `images/` (whole directory)
+5. Copy `user.js` from this repo into the **profile root** (the folder containing `chrome/`, not inside it).
+6. Restart Thunderbird.
 
-For a definitive Lightbird experience, install the following add-ons:
+### Uninstall
 
-- [Auto Profile Picture](https://addons.thunderbird.net/thunderbird/addon/auto-profile-picture/)
-- [Thunderbird Conversations](https://addons.thunderbird.net/thunderbird/addon/gmail-conversation-view/)
-- [uBlock Origin](https://addons.thunderbird.net/thunderbird/addon/ublock-origin/) (optional)
+```bash
+bash install.sh --uninstall
+```
+
+Or delete `chrome/userChrome.css`, `chrome/userContent.css`, `chrome/lightbird/`, and `chrome/images/` manually.
+
+---
+
+## Recommended add-ons
+
+- [Thunderbird Conversations](https://addons.thunderbird.net/thunderbird/addon/gmail-conversation-view/) — threaded conversation view
+- [Auto Profile Picture](https://addons.thunderbird.net/thunderbird/addon/auto-profile-picture/) — avatar images in message list
+- [uBlock Origin](https://addons.thunderbird.net/thunderbird/addon/ublock-origin/) — optional ad blocking
+
+## Windows — Mica / Acrylic transparency
+
+Thunderbird 140+ supports native Mica/Acrylic transparency on Windows 11.
+Open **Advanced Preferences** and set:
+
+| Preference | Value |
+|---|---|
+| `widget.windows.mica` | `true` |
+| `widget.windows.mica.toplevel-backdrop` | `1` = Mica, `2` = Acrylic |
+
+Also set Thunderbird's colour theme to **System theme — auto**.
 
 ## Customization
 
-### Advanced Preferences
+### CSS variables
 
-You can create and toggle these Boolean preferences if you feel like it.
-
-- `lightbird.logo.hide` - hide the logo at the top-left of the window.
-
-### Custom CSS
-
-Lightbird heavily uses root variables stored in `lightbird/components/variables.css`. You can modify this file or as a recommendation, create a CSS file to override them and then import it using the `userChrome.css` file.
-
-Here's a sample `custom.css` that makes Lightbird red:
+All sizing and colour tokens live in `lightbird/components/variables.css`.
+Create a `lightbird/custom.css` to override them without touching the base files:
 
 ```css
-/* makes lightbird red */
+/* lightbird/custom.css — example: red accent */
 :root {
-	--selected-item-color: rgba(255, 0, 0, 0.1) !important;
-	--lb-text-color: rgba(255, 0, 0) !important;
-	--lb-panel-bgcolor: rgba(255, 0, 0, 0.05) !important;
+  --selected-item-color: rgba(255, 0, 0, 0.1) !important;
+  --lb-text-color: rgba(255, 0, 0) !important;
+  --lb-panel-bgcolor: rgba(255, 0, 0, 0.05) !important;
 }
 ```
 
-And then, append this line in `userChrome.css`
+Then add one line to `userChrome.css`:
 
 ```css
 @import "lightbird/custom.css";
 ```
 
-## Note
+### Wallpaper
 
-- **This theme is incomplete and a work-in-progress.**
-- Only works with system light theme.
-- Mica transparency only works on Windows.
-- Untested on macOS and Linux.
+Replace `images/winmail.png` with any image you prefer and re-run `install.sh`.
+
+### Hide the Lightbird logo
+
+In Thunderbird **Advanced Preferences**, create a Boolean preference:
+
+```
+lightbird.logo.hide = true
+```
+
+---
 
 ## Acknowledgements
 
-The icons used for this theme are from [Microsoft's Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons)
-
-The bird and mail icon is derivative work based on [Microsoft's Fluent Emoji](https://github.com/microsoft/fluentui-emoji)
-
-The font used in the Welcome page is [Junicode](https://github.com/psb1558/Junicode-font)
-
-Cloud background image by [engin akyurt](https://unsplash.com/@enginakyurt) on [Unsplash](https://unsplash.com/photos/white-clouds-under-blue-sky-during-daytime-gJILnne_HFg)
+Icons: [Microsoft Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons)
+Bird + mail icon: derivative of [Microsoft Fluent Emoji](https://github.com/microsoft/fluentui-emoji)
+Font: [Junicode](https://github.com/psb1558/Junicode-font)
+Cloud photo: [engin akyurt](https://unsplash.com/@enginakyurt) on Unsplash
