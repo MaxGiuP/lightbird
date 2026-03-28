@@ -4,20 +4,29 @@
 
 <p align="center"><img src="images/lightbird.webp" alt="Lightbird preview"></p>
 
+> **Fork of [reizumii/lightbird](https://github.com/reizumii/lightbird)** with additional fixes: dark/light mode improvements, neutral dark palette, opaque dialogs, patched Conversations and Auto Profile Picture addons.
 
 ## Installation
 
-### Quick install (Linux / macOS / Windows Git Bash)
+### Linux / macOS
 
 ```bash
-git clone https://github.com/reizumii/lightbird
+git clone https://github.com/MaxGiuP/lightbird
 cd lightbird
 bash install.sh
 ```
 
-The script auto-detects your OS, finds the default Thunderbird profile, copies the theme files into `chrome/`, and merges the required preferences into `user.js`.
+### Windows
 
-Restart Thunderbird after running the script.
+Download the repo as a ZIP or clone it, then open PowerShell in the folder and run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File install.ps1
+```
+
+> **Close Thunderbird before running the installer** — Windows locks XPI extension files while Thunderbird is open and the installer won't be able to update them.
+
+Both installers auto-detect your Thunderbird profile, copy the theme files into `chrome/`, install patched extensions, and merge the required preferences into `user.js`. Restart Thunderbird after running.
 
 ### Manual install
 
@@ -29,23 +38,32 @@ Restart Thunderbird after running the script.
    - `userContent.css`
    - `lightbird/` (whole directory)
    - `images/` (whole directory)
-5. Copy `user.js` from this repo into the **profile root** (the folder containing `chrome/`, not inside it).
-6. Restart Thunderbird.
+5. Copy `user.js` into the **profile root** (the folder containing `chrome/`, not inside it).
+6. Copy the XPI files from `extensions/` into the profile's `extensions/` folder.
+7. Restart Thunderbird.
 
 ### Uninstall
 
+**Linux / macOS:**
 ```bash
 bash install.sh --uninstall
 ```
 
-Or delete `chrome/userChrome.css`, `chrome/userContent.css`, `chrome/lightbird/`, and `chrome/images/` manually.
+**Windows:**
+```powershell
+powershell -ExecutionPolicy Bypass -File install.ps1 -Uninstall
+```
 
 ---
 
 ## Recommended add-ons
 
-- [Thunderbird Conversations](https://addons.thunderbird.net/thunderbird/addon/gmail-conversation-view/) — threaded conversation view
-- [Auto Profile Picture](https://addons.thunderbird.net/thunderbird/addon/auto-profile-picture/) — avatar images in message list
+The patched versions of these are included in `extensions/` and installed automatically:
+
+- [Thunderbird Conversations](https://addons.thunderbird.net/thunderbird/addon/gmail-conversation-view/) — threaded conversation view (patched: dark mode toggle always visible)
+- [Auto Profile Picture](https://addons.thunderbird.net/thunderbird/addon/auto-profile-picture/) — avatar images in message list (patched: refreshes immediately on thread expand/collapse)
+
+Also recommended:
 - [uBlock Origin](https://addons.thunderbird.net/thunderbird/addon/ublock-origin/) — optional ad blocking
 
 ## Windows — Mica / Acrylic transparency
@@ -84,7 +102,7 @@ Then add one line to `userChrome.css`:
 
 ### Wallpaper
 
-Replace `images/winmail.png` with any image you prefer and re-run `install.sh`.
+Replace `images/winmail.png` with any image you prefer and re-run the installer.
 
 ### Hide the Lightbird logo
 
@@ -97,6 +115,8 @@ lightbird.logo.hide = true
 ---
 
 ## Acknowledgements
+
+Fork of [reizumii/lightbird](https://github.com/reizumii/lightbird).
 
 Icons: [Microsoft Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons)
 Bird + mail icon: derivative of [Microsoft Fluent Emoji](https://github.com/microsoft/fluentui-emoji)
