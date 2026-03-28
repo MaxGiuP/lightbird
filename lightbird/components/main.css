@@ -28,6 +28,11 @@
 .list-header-bar:not([hidden]) {
   --layout-background-1: transparent;
 }
+@media (prefers-color-scheme: dark) {
+  .list-header-bar:not([hidden]) {
+    --layout-background-1: rgba(0, 0, 0, 0.45);
+  }
+}
 #threadTree[rows="thread-card"] {
   --tree-pane-background: transparent;
 }
@@ -141,11 +146,6 @@
   min-height: var(--lb-header-height);
   --thread-pane-header-padding: 14px 6px;
 }
-@media (prefers-color-scheme: dark) {
-  .list-header-bar:not([hidden]) {
-    background: rgba(0, 0, 0, 0.45) !important;
-  }
-}
 .list-header-bar-container-start,
 .list-header-bar-container-end {
   padding: 0 !important;
@@ -180,7 +180,7 @@
 }
 @media (prefers-color-scheme: dark) {
   #quick-filter-bar {
-    background: rgba(0, 0, 0, 0.4) !important;
+    --layout-background-1: rgba(0, 0, 0, 0.45);
   }
 }
 #quickFilterBarContainer {
