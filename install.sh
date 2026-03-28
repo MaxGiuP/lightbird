@@ -58,13 +58,13 @@ case "$OS" in
         [[ -n "${APPDATA:-}" ]] \
             || die "APPDATA is not set.\n  Run this script from Git Bash, MSYS2, or Cygwin."
         if command -v cygpath &>/dev/null; then
-            # cygpath is available in Git Bash, MSYS2 and Cygwin
-            TB_DIR="$(cygpath -u "${APPDATA}")/Thunderbird"
+            # -m = mixed format: C:/Users/... (forward slashes, Windows drive letter)
+            # This works with both MSYS2 bash tools AND Windows-native Python3.
+            # Do NOT use -u here: /c/Users/... paths confuse Windows-native Python3.
+            TB_DIR="$(cygpath -m "${APPDATA}")/Thunderbird"
         else
-            # Manually convert  C:\Users\name\AppData\Roaming  →  /c/Users/name/AppData/Roaming
-            _win="${APPDATA//\\//}"                                # backslashes → forward slashes
-            _drv=$(printf '%s' "${_win:0:1}" | tr 'A-Z' 'a-z')   # uppercase drive letter → lower
-            TB_DIR="/${_drv}${_win:2}/Thunderbird"                # prepend /c (etc.) and append /Thunderbird
+            # Simple backslash swap — APPDATA is already C:\Users\..., just normalise slashes
+            TB_DIR="${APPDATA//\\//}/Thunderbird"
         fi
         ;;
 esac
@@ -79,7 +79,7 @@ PROFILES_INI="${TB_DIR}/profiles.ini"
 # Strategy 1: Python 3 — most reliable cross-platform INI parser
 _find_profile_python() {
     python3 - "$PROFILES_INI" "$TB_DIR" 2>/dev/null <<'PYEOF'
-import configparser, os, sys
+import configparser, sys
 ini, tb = sys.argv[1], sys.argv[2]
 c = configparser.RawConfigParser()
 c.read(ini)
@@ -91,7 +91,9 @@ for section in c.sections():
         p      = c.get(section, 'Path')
         is_rel = not (c.has_option(section, 'IsRelative')
                       and c.get(section, 'IsRelative') == '0')
-        print(os.path.join(tb, p) if is_rel else p)
+        # Use explicit string join with / — os.path.join uses \ on Windows
+        result = tb.rstrip('/\\') + '/' + p if is_rel else p
+        print(result.replace('\\', '/'))
         sys.exit(0)
 sys.exit(1)
 PYEOF
